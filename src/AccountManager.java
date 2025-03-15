@@ -31,74 +31,72 @@ public class AccountManager {
                 case 1: {
                     System.out.println("Регистрация: \n");
 
-                    do {
-
                         System.out.println("""
                                 Введите логин: \s
                                 ⦁ Логин не должен быть пустым\s
                                 ⦁ Длина логина должна быть не менее 3 символов и не более 20 \s
                                 ⦁ Логин должен начинаться с буквы и может содержать буквы, цифры и символ подчеркивания \s""");
-                        accountRegistration.addUsername(user, scanner.nextLine());
+                    accountRegistration.addUsername(user, "Kurwa228");
                         System.out.println();
 
-                        System.out.println("""
+                            System.out.println("""
                                 Введите пароль: \s
                                 ⦁ Пароль не должен быть пустым \s
                                 ⦁ Длина пароля должна быть не менее 8 символов \s
                                 ⦁ Пароль должен содержать хотя бы одну заглавную букву, \s
                                 одну строчную, одну цифру и один специальный символ (например, !, @, #, $, %, ^, &, *)""");
-                        accountRegistration.addPassword(user, scanner.nextLine());
+                        accountRegistration.addPassword(user, "1234567!Ww");
                         System.out.println();
 
-                        System.out.println("""
+                            System.out.println("""
                                 Введите email:
                                 ⦁ Email не должен быть пустым \s
                                 ⦁ Должен содержать символ '@'""");
-                        accountRegistration.addEmail(user, scanner.nextLine());
+                        accountRegistration.addEmail(user, "example@mail.com");
                         System.out.println();
 
-                        try {
-                            if (accountRegistration.createUser())
+                        accountRegistration.createUser();
+
+                        if (accountRegistration.createUser())
                                 System.out.println("Вы успешно зарегистрировались! \n");
-                        } catch (IllegalStateException e) {
-                            System.out.println("Ошибка регистрации \n");
-                        }
-                    } while (!accountRegistration.createUser());
+                        else System.out.println("Ошибка регистрации \n");
                     break;
                 }
                 case 2: {
-                    System.out.println("Войдите: \n");
 
-                    System.out.println("Введите логин: ");
-                    accountAuthentication.setUsernameAuth(scanner.nextLine());
+                    while (!accountAuthentication.isAuthenticated()) {
+                        System.out.println(" Войдите: ");
 
-                    System.out.println("Введите пароль: ");
-                    accountAuthentication.setPasswordAuth(scanner.nextLine());
+                        System.out.println("Введите логин: ");
+                        accountAuthentication.setUsernameAuth(scanner.nextLine());
 
-                    System.out.println("Введите email: ");
-                    accountAuthentication.setEmailAuth(scanner.nextLine());
+                        System.out.println("Введите пароль: ");
+                        accountAuthentication.setPasswordAuth(scanner.nextLine());
 
-                    if (accountAuthentication.isAuthenticated()) {
-                        System.out.println("Вы успешно вошли! \n");
-                    } else System.out.println("Ошибка введения данных... \n");
+                        System.out.println("Введите email: ");
+                        accountAuthentication.setEmailAuth(scanner.nextLine());
+
+                        if (accountAuthentication.isAuthenticated()) {
+                            System.out.println("Вы успешно вошли! \n");
+                        } else System.out.println("Неверный логин, либо пароль или email... \n");
+                    }
                 }
                 break;
                 case 3: {
                     System.out.println("Просмотреть информацию о пользователе: \n");
-                    accountRegistration.getUser();
 
-                    if (accountRegistration.getUser() != null)
+                    if (accountRegistration.getUser() != null) {
                         System.out.println("Имя пользователя: " + user.getUsername() + "\n"
-                                + "Пароль: " + user.getPassword() + "\n"
                                 + "Ваш email: " + user.getEmail() + "\n");
-                    else
+                    } else
                         System.out.println("Нет доступной информации \n");
 
                     System.out.println("""
                             Выберите действие: \s
-                            1. Удалить информацию о пользователе \s
+                            1. Удалить пользователя \s
                             2. Изменить пароль \s
-                            3. Вернуться назад\s
+                            3. Изменить email\s
+                            5. Вернуться назад\s
                             """);
                     switch (userAction = Integer.parseInt(scanner.nextLine())) {
                         case 1:
@@ -107,26 +105,36 @@ public class AccountManager {
 
                             break;
                         case 2:
-                            try {
-                                if (accountRegistration.getUser() != null) {
-                                    System.out.println("Введите логин");
-                                    user.checkUsername(scanner.nextLine());
+                            if (accountRegistration.getUser() != null) {
+                                System.out.println("Введите логин");
 
-                                    System.out.println("Введите новый пароль");
-                                    user.updatePassword(scanner.nextLine());
+                                if (accountRegistration.checkUsername(scanner.nextLine()))
+                                    System.out.println("""
+                                            Введите новый пароль: \s
+                                            ⦁ Пароль не должен быть пустым \s
+                                            ⦁ Длина пароля должна быть не менее 8 символов \s
+                                            ⦁ Пароль должен содержать хотя бы одну заглавную букву, \s
+                                            одну строчную, одну цифру и один специальный символ (например, !, @, #, $, %, ^, &, *)""");
 
-                                    System.out.println("Пароль был успешно изменен. \n");
+                                accountRegistration.updatePassword(scanner.nextLine());
+                                System.out.println("Пароль был успешно изменен. \n");
 
-                                    break;
-                                }
-                            } catch (IllegalStateException e) {
+                                break;
+                            } else {
                                 System.out.println("Нет доступных зарегистрированных пользователей \n");
                             }
                         case 3:
-                            System.out.println("Вернуться назад \n");
+                            System.out.println(("""
+                                    Введите новый email:
+                                    ⦁ Email не должен быть пустым \s
+                                    ⦁ Должен содержать символ '@'"""));
+
+                            accountRegistration.updateEmail(user, scanner.nextLine());
+                            System.out.println("Email был успешно изменен. \n");
+                        case 5:
+                            break;
                     }
                 }
-                break;
                 case 4: {
                     break;
                 }

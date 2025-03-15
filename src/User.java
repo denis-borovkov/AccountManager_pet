@@ -14,32 +14,22 @@ public class User {
         this.password = BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
-    public boolean checkUsername(String username) {
-        return username.equals(getUsername());
-    }
-
-    public void updatePassword(String newPassword) {
-        if (username != null && !username.isEmpty() && checkUsername(username))
-            setPassword(newPassword);
-        else throw new IllegalStateException("Пароль не обновлён");
-    }
-
     public void setEmail(String email) {
         this.email = email;
     }
 
     public String getUsername() {
         if (username != null && !username.isEmpty()) return username;
-        else throw new IllegalStateException("Логины отсутствуют");
+        else return ("Логины отсутствует");
     }
 
     public String getPassword() {
         if (password != null && !password.isEmpty()) return password;
-        else throw new IllegalStateException("Пароли отсутствуют");
+        else return ("Пароли отсутствует");
     }
 
     public String getEmail() {
         if (email != null && !email.isEmpty()) return email;
-        else throw new IllegalStateException("Email отсутствует");
+        else return ("Email отсутствует");
     }
 }

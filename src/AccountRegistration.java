@@ -25,22 +25,46 @@ public class AccountRegistration {
         else System.out.println("Некорректный пароль \n");
     }
 
+    public boolean updatePassword(String newPassword) {
+        if (user.getUsername() != null && !user.getUsername().isEmpty() &&
+                checkUsername(user.getUsername()))
+            if (validation.isValidPassword(newPassword))
+                user.setPassword(newPassword);
+        else System.out.println("Пароль не обновлён");
+        return false;
+    }
+
     public void addEmail(User user, String email) {
         if (user != null && validation.isValidEmail(email))
             user.setEmail(email);
         else System.out.println("Некорректный email \n");
     }
 
+    public void updateEmail(User user, String newEmail) {
+        if (user.getUsername() != null && !user.getUsername().isEmpty() &&
+                checkUsername(user.getUsername()))
+            if (validation.isValidEmail(newEmail))
+                user.setEmail(newEmail);
+            else System.out.println("Email не обновлён \n");
+    }
+
     public boolean createUser() {
         if (validation.isValidUsername(user.getUsername()) &&
                 validation.isValidPassword(user.getPassword()) &&
                 validation.isValidEmail(user.getEmail()))
-            userData.put(user.getUsername(), user);
+            userData.put(user.getUsername(), new User());
         return true;
     }
 
+    public boolean checkUsername(String username) {
+        return userData.containsKey(username);
+    }
+
     public User getUser() {
-        return userData.get(user.getUsername());
+        for (String username : userData.keySet()) {
+            return userData.get(username);
+        }
+        return user;
     }
 
     public void removeUser() {

@@ -38,7 +38,7 @@ public class AccountAuthentication {
     }
 
     public boolean isAuthenticated() {
-        return  (getUsernameAuth().equals(user.getUsername()) &&
+        return  (getUsernameAuth() != null && getUsernameAuth().equals(user.getUsername()) &&
                 BCrypt.checkpw(getPasswordAuth(), user.getPassword()) &&
                 getEmailAuth().equals(user.getEmail()));
         }
