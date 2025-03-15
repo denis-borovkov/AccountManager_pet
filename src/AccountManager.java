@@ -65,7 +65,7 @@ public class AccountManager {
                 case 2: {
 
                     while (!accountAuthentication.isAuthenticated()) {
-                        System.out.println(" Войдите: ");
+                        System.out.println("Войдите: ");
 
                         System.out.println("Введите логин: ");
                         accountAuthentication.setUsernameAuth(scanner.nextLine());
@@ -106,7 +106,7 @@ public class AccountManager {
                             break;
                         case 2:
                             if (accountRegistration.getUser() != null) {
-                                System.out.println("Введите логин");
+                                System.out.println("Введите логин: \n");
 
                                 if (accountRegistration.checkUsername(scanner.nextLine()))
                                     System.out.println("""
@@ -116,21 +116,30 @@ public class AccountManager {
                                             ⦁ Пароль должен содержать хотя бы одну заглавную букву, \s
                                             одну строчную, одну цифру и один специальный символ (например, !, @, #, $, %, ^, &, *)""");
 
-                                accountRegistration.updatePassword(scanner.nextLine());
+                                accountRegistration.updatePassword(user, scanner.nextLine());
                                 System.out.println("Пароль был успешно изменен. \n");
 
                                 break;
                             } else {
-                                System.out.println("Нет доступных зарегистрированных пользователей \n");
+                                System.out.println("Нет доступных зарегистрированных пользователей. \n");
                             }
                         case 3:
-                            System.out.println(("""
+                            if (accountRegistration.getUser() != null) {
+                                System.out.println("Введите логин: \n");
+
+                                if (accountRegistration.checkUsername(scanner.nextLine()))
+                                    System.out.println(("""
                                     Введите новый email:
                                     ⦁ Email не должен быть пустым \s
                                     ⦁ Должен содержать символ '@'"""));
 
                             accountRegistration.updateEmail(user, scanner.nextLine());
                             System.out.println("Email был успешно изменен. \n");
+
+                            break;
+                            } else {
+                                System.out.println("Нет доступных зарегистрированных пользователей. \n");
+                            }
                         case 5:
                             break;
                     }
