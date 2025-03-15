@@ -38,7 +38,7 @@ public class AccountManager {
                                 ⦁ Логин не должен быть пустым\s
                                 ⦁ Длина логина должна быть не менее 3 символов и не более 20 \s
                                 ⦁ Логин должен начинаться с буквы и может содержать буквы, цифры и символ подчеркивания \s""");
-                        accountRegistration.addUsername(scanner.nextLine());
+                        accountRegistration.addUsername(user, scanner.nextLine());
                         System.out.println();
 
                         System.out.println("""
@@ -47,21 +47,21 @@ public class AccountManager {
                                 ⦁ Длина пароля должна быть не менее 8 символов \s
                                 ⦁ Пароль должен содержать хотя бы одну заглавную букву, \s
                                 одну строчную, одну цифру и один специальный символ (например, !, @, #, $, %, ^, &, *)""");
-                        accountRegistration.addPassword(scanner.nextLine());
+                        accountRegistration.addPassword(user, scanner.nextLine());
                         System.out.println();
 
                         System.out.println("""
                                 Введите email:
                                 ⦁ Email не должен быть пустым \s
                                 ⦁ Должен содержать символ '@'""");
-                        accountRegistration.addEmail(scanner.nextLine());
+                        accountRegistration.addEmail(user, scanner.nextLine());
                         System.out.println();
 
                         try {
                             if (accountRegistration.createUser())
                                 System.out.println("Вы успешно зарегистрировались! \n");
                         } catch (IllegalStateException e) {
-                            System.out.println("Ошибка регистрации");
+                            System.out.println("Ошибка регистрации \n");
                         }
                     } while (!accountRegistration.createUser());
                     break;
@@ -80,7 +80,7 @@ public class AccountManager {
 
                     if (accountAuthentication.isAuthenticated()) {
                         System.out.println("Вы успешно вошли! \n");
-                    } else System.out.println("Ошибка введения данных...");
+                    } else System.out.println("Ошибка введения данных... \n");
                 }
                 break;
                 case 3: {
@@ -132,6 +132,7 @@ public class AccountManager {
                 }
             }
         } while (userAction != 4);
+
         scanner.close();
     }
 }
