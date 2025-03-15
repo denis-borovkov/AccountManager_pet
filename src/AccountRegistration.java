@@ -13,20 +13,20 @@ public class AccountRegistration {
     }
 
     public void addUsername(User user, String username) {
-        if (validation.isValidUsername(username))
+        if (user != null && validation.isValidUsername(username))
             user.setUsername(username);
         else System.out.println("Некорректный логин \n");
     }
 
 
     public void addPassword(User user, String password) {
-        if (validation.isValidPassword(password))
+        if (user != null && validation.isValidPassword(password))
             user.setPassword(password);
         else System.out.println("Некорректный пароль \n");
     }
 
     public void addEmail(User user, String email) {
-        if (validation.isValidEmail(email))
+        if (user != null && validation.isValidEmail(email))
             user.setEmail(email);
         else System.out.println("Некорректный email \n");
     }
