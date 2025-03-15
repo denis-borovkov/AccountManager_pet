@@ -31,18 +31,33 @@ public class AccountManager {
                 case 1: {
                     System.out.println("Регистрация: \n");
 
-                    System.out.println("Введите логин: ");
+                    System.out.println("""
+                         Введите логин: \s
+                         ⦁ Логин не должен быть пустым\s
+                         ⦁ Длина логина должна быть не менее 3 символов и не более 20 \s
+                         ⦁ Логин должен начинаться с буквы и может содержать буквы, цифры и символ подчеркивания \s""");
                     accountRegistration.addUsername(scanner.nextLine());
+                    System.out.println();
 
-                    System.out.println("Введите пароль: ");
+                    System.out.println("""
+                         Введите пароль: \s
+                         ⦁ Пароль не должен быть пустым \s
+                         ⦁ Длина пароля должна быть не менее 8 символов \s
+                         ⦁ Пароль должен содержать хотя бы одну заглавную букву, \s
+                         одну строчную, одну цифру и один специальный символ (например, !, @, #, $, %, ^, &, *)""");
                     accountRegistration.addPassword(scanner.nextLine());
+                    System.out.println();
 
-                    System.out.println("Введите email: ");
+                    System.out.println("""
+                         Введите email:
+                         ⦁ Email не должен быть пустым \s
+                         ⦁ Должен содержать символ '@'""");
                     accountRegistration.addEmail(scanner.nextLine());
+                    System.out.println();
 
-                    accountRegistration.createUser();
-
-                    System.out.println("Вы успешно зарегистрировались! \n");
+                    if (accountRegistration.createUser())
+                        System.out.println("Вы успешно зарегистрировались! \n");
+                    else throw new IllegalStateException("Ошибка регистрации");
                 }
                 break;
                 case 2: {
@@ -58,7 +73,7 @@ public class AccountManager {
                     authentication.setEmailAuth(scanner.nextLine());
 
                     if (authentication.isAuthenticated()) {
-                        System.out.println("Вы успешно вошли");
+                        System.out.println("Вы успешно вошли! \n");
                     } else System.out.println("Ошибка введения данных...");
                 }
                 break;
@@ -94,9 +109,9 @@ public class AccountManager {
                                 user.updatePassword(scanner.nextLine());
 
                                 System.out.println("Пароль был успешно изменен. \n");
+
                                 break;
-                            } else System.out.println("Нет доступных зарегистрированных пользователей \n");
-                            break;
+                            } else throw new IllegalStateException("Нет доступных зарегистрированных пользователей \n");
                         case 3:
                             System.out.println("Вернуться назад \n");
                     }

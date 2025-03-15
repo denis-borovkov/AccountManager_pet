@@ -21,7 +21,7 @@ public class User {
     public void updatePassword(String newPassword) {
         if (username != null && !username.isEmpty() && checkUsername(username))
             setPassword(newPassword);
-        else System.out.println("Пароль не обновлён");
+        else throw new IllegalStateException("Пароль не обновлён");
     }
 
     public void setEmail(String email) {
@@ -30,16 +30,16 @@ public class User {
 
     public String getUsername() {
         if (username != null && !username.isEmpty()) return username;
-        else return "Логины отсутствуют";
+        else throw new IllegalStateException("Логины отсутствуют");
     }
 
     public String getPassword() {
         if (password != null && !password.isEmpty()) return password;
-        else return "Пароли отсутствуют";
+        else throw new IllegalStateException("Пароли отсутствуют");
     }
 
     public String getEmail() {
         if (email != null && !email.isEmpty()) return email;
-        else return "Email отсутствует";
+        else throw new IllegalStateException("Email отсутствует");
     }
 }
