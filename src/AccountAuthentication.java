@@ -1,9 +1,12 @@
+import org.mindrot.jbcrypt.BCrypt;
+
 public class AccountAuthentication {
 
     User user;
 
     private String usernameAuth;
     private String passwordAuth;
+    private String emailAuth;
 
 
     public AccountAuthentication(User user) {
@@ -18,6 +21,10 @@ public class AccountAuthentication {
         this.passwordAuth = passwordAuth;
     }
 
+    public void setEmailAuth(String emailAuth) {
+        this.emailAuth = emailAuth;
+    }
+
     public String getUsernameAuth() {
         return usernameAuth;
     }
@@ -26,8 +33,13 @@ public class AccountAuthentication {
         return passwordAuth;
     }
 
-    public boolean inputCheck() {
-        return getUsernameAuth().equals(user.getUsername()) &&
-                getPasswordAuth().equals(user.getPassword());
+    public String getEmailAuth(){
+        return emailAuth;
     }
+
+    public boolean isAuthenticated() {
+        return  (getUsernameAuth().equals(user.getUsername()) &&
+                BCrypt.checkpw(getPasswordAuth(), user.getPassword()) &&
+                getEmailAuth().equals(user.getEmail()));
+        }
 }
