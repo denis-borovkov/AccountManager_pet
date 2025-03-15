@@ -4,7 +4,7 @@ import java.util.HashMap;
 public class AccountRegistration {
 
     User user;
-    Validation validation;
+    private final Validation validation;
     private final Map <String, User> userData = new HashMap<>();
 
     public AccountRegistration(User user) {
@@ -30,7 +30,7 @@ public class AccountRegistration {
                 checkUsername(user.getUsername()))
             if (validation.isValidPassword(newPassword))
                 user.setPassword(newPassword);
-        else System.out.println("Пароль не обновлён");
+        else System.out.println("Пароль не был обновлён \n");
     }
 
     public void addEmail(User user, String email) {
@@ -60,13 +60,10 @@ public class AccountRegistration {
     }
 
     public User getUser() {
-        for (String username : userData.keySet()) {
-            return userData.get(username);
-        }
-        return user;
+            return user;
     }
 
     public void removeUser() {
-        userData.remove(user.getUsername());
+            userData.remove(user.getUsername());
     }
 }

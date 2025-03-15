@@ -100,13 +100,17 @@ public class AccountManager {
                             """);
                     switch (userAction = Integer.parseInt(scanner.nextLine())) {
                         case 1:
-                            accountRegistration.removeUser();
-                            System.out.println("Пользователь успешно удален. \n");
+                            if (accountRegistration.getUser() != null) {
+                                System.out.println("Введите логин:");
 
+                                if (accountRegistration.checkUsername(scanner.nextLine()))
+                                    accountRegistration.removeUser();
+                                System.out.println("Пользователь успешно удален. \n");
+                            } else System.out.println("Произошла ошибка удаления пользователя.");
                             break;
                         case 2:
                             if (accountRegistration.getUser() != null) {
-                                System.out.println("Введите логин: \n");
+                                System.out.println("Введите логин:");
 
                                 if (accountRegistration.checkUsername(scanner.nextLine()))
                                     System.out.println("""
@@ -118,14 +122,13 @@ public class AccountManager {
 
                                 accountRegistration.updatePassword(user, scanner.nextLine());
                                 System.out.println("Пароль был успешно изменен. \n");
-
                                 break;
                             } else {
                                 System.out.println("Нет доступных зарегистрированных пользователей. \n");
                             }
                         case 3:
                             if (accountRegistration.getUser() != null) {
-                                System.out.println("Введите логин: \n");
+                                System.out.println("Введите логин:");
 
                                 if (accountRegistration.checkUsername(scanner.nextLine()))
                                     System.out.println(("""
@@ -135,7 +138,6 @@ public class AccountManager {
 
                             accountRegistration.updateEmail(user, scanner.nextLine());
                             System.out.println("Email был успешно изменен. \n");
-
                             break;
                             } else {
                                 System.out.println("Нет доступных зарегистрированных пользователей. \n");
@@ -149,7 +151,6 @@ public class AccountManager {
                 }
             }
         } while (userAction != 4);
-
         scanner.close();
     }
 }
