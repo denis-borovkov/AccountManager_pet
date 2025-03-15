@@ -25,13 +25,12 @@ public class AccountRegistration {
         else System.out.println("Некорректный пароль \n");
     }
 
-    public boolean updatePassword(String newPassword) {
+    public void updatePassword(String newPassword) {
         if (user.getUsername() != null && !user.getUsername().isEmpty() &&
                 checkUsername(user.getUsername()))
             if (validation.isValidPassword(newPassword))
                 user.setPassword(newPassword);
         else System.out.println("Пароль не обновлён");
-        return false;
     }
 
     public void addEmail(User user, String email) {
