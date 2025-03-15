@@ -6,7 +6,7 @@ public class AccountManager {
         Scanner scanner = new Scanner(System.in);
         User user = new User();
         AccountRegistration accountRegistration = new AccountRegistration(user);
-        AccountAuthentication authentication = new AccountAuthentication(user);
+        AccountAuthentication accountAuthentication = new AccountAuthentication(user);
 
         int userAction = 0;
 
@@ -55,24 +55,27 @@ public class AccountManager {
                     accountRegistration.addEmail(scanner.nextLine());
                     System.out.println();
 
-                    if (accountRegistration.createUser())
-                        System.out.println("Вы успешно зарегистрировались! \n");
-                    else throw new IllegalStateException("Ошибка регистрации");
+                    try {
+                        if (accountRegistration.createUser())
+                            System.out.println("Вы успешно зарегистрировались! \n");
+                    } catch (IllegalStateException e) {
+                        System.out.println("Ошибка регистрации");
+                    }
                 }
                 break;
                 case 2: {
                     System.out.println("Войдите: \n");
 
                     System.out.println("Введите логин: ");
-                    authentication.setUsernameAuth(scanner.nextLine());
+                    accountAuthentication.setUsernameAuth(scanner.nextLine());
 
                     System.out.println("Введите пароль: ");
-                    authentication.setPasswordAuth(scanner.nextLine());
+                    accountAuthentication.setPasswordAuth(scanner.nextLine());
 
                     System.out.println("Введите email: ");
-                    authentication.setEmailAuth(scanner.nextLine());
+                    accountAuthentication.setEmailAuth(scanner.nextLine());
 
-                    if (authentication.isAuthenticated()) {
+                    if (accountAuthentication.isAuthenticated()) {
                         System.out.println("Вы успешно вошли! \n");
                     } else System.out.println("Ошибка введения данных...");
                 }
@@ -101,17 +104,21 @@ public class AccountManager {
 
                             break;
                         case 2:
-                            if (accountRegistration.getUser() != null) {
-                                System.out.println("Введите логин");
-                                user.checkUsername(scanner.nextLine());
+                            try {
+                                if (accountRegistration.getUser() != null) {
+                                    System.out.println("Введите логин");
+                                    user.checkUsername(scanner.nextLine());
 
-                                System.out.println("Введите новый пароль");
-                                user.updatePassword(scanner.nextLine());
+                                    System.out.println("Введите новый пароль");
+                                    user.updatePassword(scanner.nextLine());
 
-                                System.out.println("Пароль был успешно изменен. \n");
+                                    System.out.println("Пароль был успешно изменен. \n");
 
-                                break;
-                            } else throw new IllegalStateException("Нет доступных зарегистрированных пользователей \n");
+                                    break;
+                                }
+                            } catch (IllegalStateException e) {
+                                System.out.println("Нет доступных зарегистрированных пользователей \n");
+                            }
                         case 3:
                             System.out.println("Вернуться назад \n");
                     }
