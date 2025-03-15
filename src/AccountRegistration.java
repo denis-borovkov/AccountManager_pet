@@ -30,21 +30,30 @@ public class AccountRegistration {
     }
 
     public void addUsername(String username) {
-        if (isValidUsername(username))
-            user.setUsername(username);
-        else throw new IllegalArgumentException("Некорректный логин \n");
+        try {
+            if (isValidUsername(username))
+                user.setUsername(username);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Некорректный логин \n");
+        }
     }
 
     public void addPassword(String password) {
-        if (isValidPassword(password))
-            user.setPassword(password);
-        else throw new IllegalArgumentException("Некорректный пароль \n");
+        try {
+            if (isValidPassword(password))
+                user.setPassword(password);
+        } catch (IllegalStateException e) {
+            System.out.println("Некорректный пароль \n");
+        }
     }
 
     public void addEmail(String email) {
-        if (isValidEmail(email))
-            user.setEmail(email);
-        else throw new IllegalArgumentException("Некорректный email \n");
+        try {
+            if (isValidEmail(email))
+                user.setEmail(email);
+        } catch (IllegalStateException e) {
+            System.out.println("Некорректный email \n");
+        }
     }
 
     public boolean createUser() {
