@@ -5,7 +5,7 @@ public class AccountRegistration {
 
     User user;
     private final Validation validation;
-    private final Map <String, User> userData = new HashMap<>();
+    private final Map <String, String> userData = new HashMap<>();
 
     public AccountRegistration(User user) {
         this.user = user;
@@ -26,22 +26,20 @@ public class AccountRegistration {
     }
 
     public void updatePassword(User user, String newPassword) {
-        if (user.getUsername() != null && !user.getUsername().isEmpty() &&
-                checkUsername(user.getUsername()))
-            if (validation.isValidPassword(newPassword))
+            if (validation.isValidPassword(newPassword)) {
                 user.setPassword(newPassword);
-        else System.out.println("Пароль не был обновлён \n");
+                userData.replace(user.getUsername(), user.getPassword());
+            }
+            else System.out.println("Пароль не был обновлён \n");
     }
 
     public void addEmail(User user, String email) {
-        if (user != null && validation.isValidEmail(email))
+        if (validation.isValidEmail(email))
             user.setEmail(email);
         else System.out.println("Некорректный email \n");
     }
 
     public void updateEmail(User user, String newEmail) {
-        if (user.getUsername() != null && !user.getUsername().isEmpty() &&
-                checkUsername(user.getUsername()))
             if (validation.isValidEmail(newEmail))
                 user.setEmail(newEmail);
             else System.out.println("Email не обновлён \n");
@@ -51,12 +49,12 @@ public class AccountRegistration {
         if (validation.isValidUsername(user.getUsername()) &&
                 validation.isValidPassword(user.getPassword()) &&
                 validation.isValidEmail(user.getEmail()))
-            userData.put(user.getUsername(), new User());
+            userData.put(user.getUsername(), user.getPassword());
         return true;
     }
 
     public String getAllUsers() {
-        for (Map.Entry<String, User> entry : userData.entrySet()) {
+        for (Map.Entry<String, String> entry : userData.entrySet()) {
             return entry.getKey() + " " + entry.getValue();
             }
         return null;
@@ -68,5 +66,7 @@ public class AccountRegistration {
 
     public void removeUser() {
             userData.remove(user.getUsername());
+            user.setUsername(null);
+            user.setPassword(null);
     }
 }
