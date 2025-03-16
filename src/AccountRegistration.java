@@ -42,16 +42,15 @@ public class AccountRegistration {
         } else System.out.println("Email не обновлён \n");
     }
 
-    public boolean createUser(User user) {
-        if (user != null &&
-        validation.isValidUsername(user.getUsername()) &&
-        validation.isValidPassword(user.getPassword(), user.getUsername()) &&
-        validation.isValidEmail(user.getEmail())) {
-            userData.put(user.getUsername(), user);
-            return true;
+    public boolean createUser(String username, String password, String email) {
+        if (userData.containsKey(username)) {
+            System.out.println("Пользователь с таким логином уже существует.");
+            return false;
         }
-        System.out.println("Ошибка при создании пользователя \n");
-        return false;
+        User user = new User(username, password, email);
+        userData.put(user.getUsername(), user);
+        System.out.println("Пользователь успешно добавлен");
+        return true;
     }
 
     public String getAllUsers() {

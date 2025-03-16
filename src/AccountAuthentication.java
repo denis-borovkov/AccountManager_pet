@@ -1,10 +1,6 @@
 public class AccountAuthentication {
 
-    private final User user;
-
-    public AccountAuthentication(User user) {
-        this.user = user;
-    }
+    User user;
 
     public boolean isAuthenticated(String username, String password) {
         if (user == null) {

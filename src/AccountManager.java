@@ -4,9 +4,8 @@ public class AccountManager {
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
-        User user = new User();
-        AccountRegistration accountRegistration = new AccountRegistration(user);
-        AccountAuthentication accountAuthentication = new AccountAuthentication(user);
+        AccountRegistration accountRegistration = new AccountRegistration();
+        AccountAuthentication accountAuthentication = new AccountAuthentication();
 
         int userAction = 0;
 
