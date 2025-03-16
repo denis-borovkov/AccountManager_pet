@@ -20,16 +20,16 @@ public class User {
 
     public String getUsername() {
         if (username != null && !username.isEmpty()) return username;
-        else return ("Логины отсутствует");
+        else return null;
     }
 
     public String getPassword() {
         if (password != null && !password.isEmpty()) return password;
-        else return ("Пароли отсутствует");
+        else return null;
     }
 
     public String getEmail() {
         if (email != null && !email.isEmpty()) return email;
-        else return ("Email отсутствует");
+        else return null;
     }
 }

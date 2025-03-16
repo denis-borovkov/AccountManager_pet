@@ -55,12 +55,15 @@ public class AccountRegistration {
         return true;
     }
 
-    public boolean checkUsername(String username) {
-        return userData.containsKey(username);
+    public String getAllUsers() {
+        for (Map.Entry<String, User> entry : userData.entrySet()) {
+            return entry.getKey() + " " + entry.getValue();
+            }
+        return null;
     }
 
-    public User getUser() {
-            return user;
+    public boolean checkUsername(String username) {
+        return userData.containsKey(username);
     }
 
     public void removeUser() {

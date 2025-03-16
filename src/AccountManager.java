@@ -78,73 +78,72 @@ public class AccountManager {
 
                         if (accountAuthentication.isAuthenticated()) {
                             System.out.println("Вы успешно вошли! \n");
-                        } else System.out.println("Неверный логин, либо пароль или email... \n");
+                        } else System.out.println("Неверный логин, пароль или email... \n");
                     }
                 }
                 break;
                 case 3: {
                     System.out.println("Просмотреть информацию о пользователе: \n");
+                    System.out.println(accountRegistration.getAllUsers());
 
-                    if (accountRegistration.getUser() != null) {
+                    if (user.getUsername() != null) {
                         System.out.println("Имя пользователя: " + user.getUsername() + "\n"
                                 + "Ваш email: " + user.getEmail() + "\n");
+
+                        System.out.println("""
+                                Выберите действие: \s
+                                1. Удалить пользователя \s
+                                2. Изменить пароль \s
+                                3. Изменить email\s
+                                5. Вернуться назад\s
+                                """);
+                        switch (userAction = Integer.parseInt(scanner.nextLine())) {
+                            case 1:
+                                if (user.getUsername() != null) {
+                                    System.out.println("Введите логин:");
+
+                                    if (accountRegistration.checkUsername(scanner.nextLine()))
+                                        accountRegistration.removeUser();
+                                    System.out.println("Пользователь успешно удален. \n");
+                                } else System.out.println("Произошла ошибка удаления пользователя.");
+                                break;
+                            case 2:
+                                if (user.getUsername() != null) {
+                                    System.out.println("Введите логин:");
+
+                                    if (accountRegistration.checkUsername(scanner.nextLine()))
+                                        System.out.println("""
+                                                Введите новый пароль: \s
+                                                ⦁ Пароль не должен быть пустым \s
+                                                ⦁ Длина пароля должна быть не менее 8 символов \s
+                                                ⦁ Пароль должен содержать хотя бы одну заглавную букву, \s
+                                                одну строчную, одну цифру и один специальный символ (например, !, @, #, $, %, ^, &, *)""");
+
+                                    accountRegistration.updatePassword(user, scanner.nextLine());
+                                    System.out.println("Пароль был успешно изменен. \n");
+                                    break;
+                                }
+                            case 3:
+                                if (user.getUsername() != null) {
+                                    System.out.println("Введите логин:");
+
+                                    if (accountRegistration.checkUsername(scanner.nextLine()))
+                                        System.out.println(("""
+                                                Введите новый email:
+                                                ⦁ Email не должен быть пустым \s
+                                                ⦁ Должен содержать символ '@'"""));
+
+                                    accountRegistration.updateEmail(user, scanner.nextLine());
+                                    System.out.println("Email был успешно изменен. \n");
+                                    break;
+                                } else {
+                                    System.out.println("Нет доступных зарегистрированных пользователей. \n");
+                                }
+                            case 5:
+                                break;
+                        }
                     } else
                         System.out.println("Нет доступной информации \n");
-
-                    System.out.println("""
-                            Выберите действие: \s
-                            1. Удалить пользователя \s
-                            2. Изменить пароль \s
-                            3. Изменить email\s
-                            5. Вернуться назад\s
-                            """);
-                    switch (userAction = Integer.parseInt(scanner.nextLine())) {
-                        case 1:
-                            if (accountRegistration.getUser() != null) {
-                                System.out.println("Введите логин:");
-
-                                if (accountRegistration.checkUsername(scanner.nextLine()))
-                                    accountRegistration.removeUser();
-                                System.out.println("Пользователь успешно удален. \n");
-                            } else System.out.println("Произошла ошибка удаления пользователя.");
-                            break;
-                        case 2:
-                            if (accountRegistration.getUser() != null) {
-                                System.out.println("Введите логин:");
-
-                                if (accountRegistration.checkUsername(scanner.nextLine()))
-                                    System.out.println("""
-                                            Введите новый пароль: \s
-                                            ⦁ Пароль не должен быть пустым \s
-                                            ⦁ Длина пароля должна быть не менее 8 символов \s
-                                            ⦁ Пароль должен содержать хотя бы одну заглавную букву, \s
-                                            одну строчную, одну цифру и один специальный символ (например, !, @, #, $, %, ^, &, *)""");
-
-                                accountRegistration.updatePassword(user, scanner.nextLine());
-                                System.out.println("Пароль был успешно изменен. \n");
-                                break;
-                            } else {
-                                System.out.println("Нет доступных зарегистрированных пользователей. \n");
-                            }
-                        case 3:
-                            if (accountRegistration.getUser() != null) {
-                                System.out.println("Введите логин:");
-
-                                if (accountRegistration.checkUsername(scanner.nextLine()))
-                                    System.out.println(("""
-                                    Введите новый email:
-                                    ⦁ Email не должен быть пустым \s
-                                    ⦁ Должен содержать символ '@'"""));
-
-                            accountRegistration.updateEmail(user, scanner.nextLine());
-                            System.out.println("Email был успешно изменен. \n");
-                            break;
-                            } else {
-                                System.out.println("Нет доступных зарегистрированных пользователей. \n");
-                            }
-                        case 5:
-                            break;
-                    }
                 }
                 case 4: {
                     break;
