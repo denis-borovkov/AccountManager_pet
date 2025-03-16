@@ -1,45 +1,17 @@
-import org.mindrot.jbcrypt.BCrypt;
-
 public class AccountAuthentication {
 
-    User user;
-
-    private String usernameAuth;
-    private String passwordAuth;
-    private String emailAuth;
-
+    private final User user;
 
     public AccountAuthentication(User user) {
         this.user = user;
     }
 
-    public void setUsernameAuth(String usernameAuth) {
-        this.usernameAuth = usernameAuth;
-    }
-
-    public void setPasswordAuth(String passwordAuth) {
-        this.passwordAuth = passwordAuth;
-    }
-
-    public void setEmailAuth(String emailAuth) {
-        this.emailAuth = emailAuth;
-    }
-
-    public String getUsernameAuth() {
-        return usernameAuth;
-    }
-
-    public String getPasswordAuth() {
-        return passwordAuth;
-    }
-
-    public String getEmailAuth(){
-        return emailAuth;
-    }
-
-    public boolean isAuthenticated() {
-        return  (getUsernameAuth() != null && getUsernameAuth().equals(user.getUsername()) &&
-                BCrypt.checkpw(getPasswordAuth(), user.getPassword()) &&
-                getEmailAuth().equals(user.getEmail()));
+    public boolean isAuthenticated(String username, String password) {
+        if (user == null) {
+            System.out.println("Пользователь не найден.");
+            return false;
+        }
+        return  (username != null && username.equals(user.getUsername()) &&
+                user.checkPassword(password));
         }
 }
