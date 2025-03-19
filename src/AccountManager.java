@@ -4,8 +4,7 @@ public class AccountManager {
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
-        AccountRegistration accountRegistration = new AccountRegistration();
-        AccountAuthentication accountAuthentication = new AccountAuthentication();
+        UserManager userManager = new UserManager();
 
         int userAction = 0;
 
@@ -38,9 +37,6 @@ public class AccountManager {
 
                     String username = "Kurwa228";
 
-                    if (accountRegistration.isUsernameAvailable(username)) {
-                        continue;
-                }
                         System.out.println();
 
                             System.out.println("""
@@ -61,7 +57,7 @@ public class AccountManager {
                         String email = "example@mail.ru";
                         System.out.println();
 
-                        if (accountRegistration.createUser(username, password, email))
+                        if (userManager.createUser(username, password, email))
                                 System.out.println("Вы успешно зарегистрировались! \n");
                         else System.out.println("Ошибка регистрации \n");
                     break;
@@ -76,7 +72,7 @@ public class AccountManager {
                         System.out.println("Введите пароль: \n");
                         String password = "12345678!Qq";
 
-                        if (accountAuthentication.isAuthenticated(username,password))
+                        if (userManager.isAuthenticated(username,password))
                         System.out.println("Вы успешно вошли! \n");
                         else System.out.println("Неверный логин или пароль \n");
                 }
@@ -84,8 +80,8 @@ public class AccountManager {
                 case 3: {
                     System.out.println("Просмотреть информацию о пользователе: \n");
 
-                    if (accountAuthentication.isAuthenticated()) {
-                        System.out.println(accountRegistration.getAllUsers());
+                    if (!userManager.getAllUsers().isEmpty()) {
+                        System.out.println(userManager.getAllUsers());
 
                         System.out.println("""
                                 Выберите действие: \s
@@ -99,15 +95,18 @@ public class AccountManager {
                             case 1:
                                 System.out.println("Введите логин:");
 
-                                if (accountRegistration.checkUsername(scanner.nextLine()))
-                                    if (accountRegistration.removeUser(scanner.nextLine()))
+                                String username = scanner.nextLine();
+                                System.out.println();
+
+                                if (userManager.checkUsername(username))
+                                    if (userManager.removeUser(username))
                                         System.out.println("Пользователь успешно удален. \n");
                                 break;
                             case 2:
                                 System.out.println("Введите логин:");
-                                String username = scanner.nextLine();
+                                String username1 = scanner.nextLine();
 
-                                if (accountRegistration.checkUsername(username))
+                                if (userManager.checkUsername(username1))
                                     System.out.println("""
                                             Введите новый пароль: \s
                                             ⦁ Пароль не должен быть пустым \s
@@ -116,21 +115,22 @@ public class AccountManager {
                                             одну строчную, одну цифру и один специальный символ (например, !, @, #, $, %, ^, &, *)""");
 
                                 String newPassword = scanner.nextLine();
-                                if (accountRegistration.updatePassword(username, newPassword))
+                                if (userManager.updatePassword(username1, newPassword))
                                     System.out.println("Пароль был успешно изменен. \n");
                                 break;
                             case 3:
                                 System.out.println("Введите логин:");
-                                String username1 = scanner.nextLine();
+                                String username2 = scanner.nextLine();
+                                System.out.println();
 
-                                if (accountRegistration.checkUsername(username1))
+                                if (userManager.checkUsername(username2))
                                     System.out.println(("""
                                             Введите новый email:
                                             ⦁ Email не должен быть пустым \s
                                             ⦁ Должен содержать символ '@'"""));
 
                                 String newEmail = scanner.nextLine();
-                                if (accountRegistration.updateEmail(username1, newEmail))
+                                if (userManager.updateEmail(username2, newEmail))
                                     System.out.println("Email был успешно изменен. \n");
                                 break;
                             case 5:
