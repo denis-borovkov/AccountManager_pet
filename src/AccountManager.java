@@ -103,10 +103,13 @@ public class AccountManager {
                                         System.out.println("Пользователь успешно удален. \n");
                                 break;
                             case 2:
-                                System.out.println("Введите логин:");
+                                System.out.println("Введите логин: \n");
                                 String username1 = scanner.nextLine();
 
-                                if (userManager.checkUsername(username1))
+                                System.out.println("Введите старый пароль: \n");
+                                String oldPassword = scanner.nextLine();
+
+                                if (userManager.checkUsername(username1) && userManager.checkPassword(username1, oldPassword))
                                     System.out.println("""
                                             Введите новый пароль: \s
                                             ⦁ Пароль не должен быть пустым \s
@@ -119,7 +122,7 @@ public class AccountManager {
                                     System.out.println("Пароль был успешно изменен. \n");
                                 break;
                             case 3:
-                                System.out.println("Введите логин:");
+                                System.out.println("Введите логин: \n");
                                 String username2 = scanner.nextLine();
                                 System.out.println();
 

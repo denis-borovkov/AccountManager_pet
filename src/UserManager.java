@@ -87,6 +87,11 @@ public class UserManager {
         return userData.containsKey(username);
     }
 
+    public boolean checkPassword(String username, String password) {
+        User user = userData.get(username);
+        return user.checkPassword(password);
+    }
+
     public boolean removeUser(String username) {
         if (userData.containsKey(username)) {
             userData.remove(username);
