@@ -11,15 +11,15 @@ public class Validation {
 
     public boolean isValidPassword(String password, String username) {
         if (password == null || password.length() < 8 || password.equals(username)) {
-            return false;
+            return true;
         }
-        return Pattern.matches("^(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$", password);
+        return !Pattern.matches("^(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$", password);
     }
 
     public boolean isValidEmail(String email) {
         if (email == null) {
-            return false;
+            return true;
         }
-        return Pattern.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$", email);
+        return !Pattern.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$", email);
     }
 }

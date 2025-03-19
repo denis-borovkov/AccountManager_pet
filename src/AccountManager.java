@@ -30,12 +30,17 @@ public class AccountManager {
                 case 1: {
                     System.out.println("Регистрация: \n");
 
-                        System.out.println("""
-                                Введите логин: \s
-                                ⦁ Логин не должен быть пустым\s
-                                ⦁ Длина логина должна быть не менее 3 символов и не более 20 \s
-                                ⦁ Логин должен начинаться с буквы и может содержать буквы, цифры и символ подчеркивания \s""");
-                    accountRegistration.addUsername(user, "Kurwa228");
+                    System.out.println("""
+                            Введите логин: \s
+                            ⦁ Логин не должен быть пустым\s
+                            ⦁ Длина логина должна быть не менее 3 символов и не более 20 \s
+                            ⦁ Логин должен начинаться с буквы и может содержать буквы, цифры и символ подчеркивания \s""");
+
+                    String username = "Kurwa228";
+
+                    if (accountRegistration.isUsernameAvailable(username)) {
+                        continue;
+                }
                         System.out.println();
 
                             System.out.println("""
@@ -44,49 +49,43 @@ public class AccountManager {
                                 ⦁ Длина пароля должна быть не менее 8 символов \s
                                 ⦁ Пароль должен содержать хотя бы одну заглавную букву, \s
                                 одну строчную, одну цифру и один специальный символ (например, !, @, #, $, %, ^, &, *)""");
-                        accountRegistration.addPassword(user, "1234567!Ww");
+
+                        String password = "12345678!Qq";
                         System.out.println();
 
                             System.out.println("""
                                 Введите email:
                                 ⦁ Email не должен быть пустым \s
                                 ⦁ Должен содержать символ '@'""");
-                        accountRegistration.addEmail(user, "example@mail.com");
+
+                        String email = "example@mail.ru";
                         System.out.println();
 
-                        accountRegistration.createUser();
-
-                        if (accountRegistration.createUser())
+                        if (accountRegistration.createUser(username, password, email))
                                 System.out.println("Вы успешно зарегистрировались! \n");
                         else System.out.println("Ошибка регистрации \n");
                     break;
                 }
                 case 2: {
 
-                    while (!accountAuthentication.isAuthenticated()) {
                         System.out.println("Войдите: ");
 
-                        System.out.println("Введите логин: ");
-                        accountAuthentication.setUsernameAuth(scanner.nextLine());
+                        System.out.println("Введите логин: \n");
+                        String username = "Kurwa228";
 
-                        System.out.println("Введите пароль: ");
-                        accountAuthentication.setPasswordAuth(scanner.nextLine());
+                        System.out.println("Введите пароль: \n");
+                        String password = "12345678!Qq";
 
-                        System.out.println("Введите email: ");
-                        accountAuthentication.setEmailAuth(scanner.nextLine());
-
-                        if (accountAuthentication.isAuthenticated()) {
-                            System.out.println("Вы успешно вошли! \n");
-                        } else System.out.println("Неверный логин, пароль или email... \n");
-                    }
+                        if (accountAuthentication.isAuthenticated(username,password))
+                        System.out.println("Вы успешно вошли! \n");
+                        else System.out.println("Неверный логин или пароль \n");
                 }
                 break;
                 case 3: {
                     System.out.println("Просмотреть информацию о пользователе: \n");
 
-                    if (user.getUsername() != null && !user.getUsername().isEmpty()) {
-                        System.out.println("Имя пользователя: " + user.getUsername() + "\n"
-                                + "Ваш email: " + user.getEmail() + "\n");
+                    if (accountAuthentication.isAuthenticated()) {
+                        System.out.println(accountRegistration.getAllUsers());
 
                         System.out.println("""
                                 Выберите действие: \s
@@ -96,48 +95,54 @@ public class AccountManager {
                                 5. Вернуться назад\s
                                 """);
                         switch (userAction = Integer.parseInt(scanner.nextLine())) {
-                            case 1:
-                                    System.out.println("Введите логин:");
 
-                                    if (accountRegistration.checkUsername(scanner.nextLine()))
-                                        accountRegistration.removeUser();
-                                    System.out.println("Пользователь успешно удален. \n");
+                            case 1:
+                                System.out.println("Введите логин:");
+
+                                if (accountRegistration.checkUsername(scanner.nextLine()))
+                                    if (accountRegistration.removeUser(scanner.nextLine()))
+                                        System.out.println("Пользователь успешно удален. \n");
                                 break;
                             case 2:
-                                    System.out.println("Введите логин:");
+                                System.out.println("Введите логин:");
+                                String username = scanner.nextLine();
 
-                                    if (accountRegistration.checkUsername(scanner.nextLine()))
-                                        System.out.println("""
-                                                Введите новый пароль: \s
-                                                ⦁ Пароль не должен быть пустым \s
-                                                ⦁ Длина пароля должна быть не менее 8 символов \s
-                                                ⦁ Пароль должен содержать хотя бы одну заглавную букву, \s
-                                                одну строчную, одну цифру и один специальный символ (например, !, @, #, $, %, ^, &, *)""");
+                                if (accountRegistration.checkUsername(username))
+                                    System.out.println("""
+                                            Введите новый пароль: \s
+                                            ⦁ Пароль не должен быть пустым \s
+                                            ⦁ Длина пароля должна быть не менее 8 символов \s
+                                            ⦁ Пароль должен содержать хотя бы одну заглавную букву, \s
+                                            одну строчную, одну цифру и один специальный символ (например, !, @, #, $, %, ^, &, *)""");
 
-                                    accountRegistration.updatePassword(user, scanner.nextLine());
+                                String newPassword = scanner.nextLine();
+                                if (accountRegistration.updatePassword(username, newPassword))
                                     System.out.println("Пароль был успешно изменен. \n");
-                                    break;
+                                break;
                             case 3:
-                                    System.out.println("Введите логин:");
+                                System.out.println("Введите логин:");
+                                String username1 = scanner.nextLine();
 
-                                    if (accountRegistration.checkUsername(scanner.nextLine()))
-                                        System.out.println(("""
-                                                Введите новый email:
-                                                ⦁ Email не должен быть пустым \s
-                                                ⦁ Должен содержать символ '@'"""));
+                                if (accountRegistration.checkUsername(username1))
+                                    System.out.println(("""
+                                            Введите новый email:
+                                            ⦁ Email не должен быть пустым \s
+                                            ⦁ Должен содержать символ '@'"""));
 
-                                    accountRegistration.updateEmail(user, scanner.nextLine());
+                                String newEmail = scanner.nextLine();
+                                if (accountRegistration.updateEmail(username1, newEmail))
                                     System.out.println("Email был успешно изменен. \n");
-                                    break;
+                                break;
                             case 5:
                                 break;
                         }
-                    } else
-                        System.out.println("Нет доступной информации \n");
+                    } else {
+                        System.out.println("Нет доступной информации. \n");
+                    }
                 }
-                case 4: {
-                    break;
-                }
+                    case 4: {
+                        break;
+                    }
             }
         } while (userAction != 4);
         scanner.close();

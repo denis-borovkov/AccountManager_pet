@@ -4,76 +4,87 @@ import java.util.HashMap;
 public class AccountRegistration {
 
     private final Validation validation = new Validation();
-    private final Map <String, User> userData = new HashMap<>();
-
-    public void addUsername(User user, String username) {
-        if (user != null && validation.isValidUsername(username)) {
-            user.setUsername(username);
-            userData.put(username, user);
-        } else System.out.println("Некорректный логин \n");
-    }
-
-    public void addPassword(User user, String password) {
-        if (user != null && validation.isValidPassword(password, user.getUsername())) {
-            user.setPassword(password);
-            userData.put(user.getUsername(), user);
-        } else System.out.println("Некорректный пароль \n");
-    }
-
-    public void updatePassword(User user, String newPassword) {
-        if (user != null && validation.isValidPassword(newPassword, user.getUsername())) {
-            user.setPassword(newPassword);
-            userData.replace(user.getUsername(), user);
-        }
-        else System.out.println("Пароль не был обновлён \n");
-    }
-
-    public void addEmail(User user, String email) {
-        if (user != null &&validation.isValidEmail(email)) {
-            user.setEmail(email);
-            userData.put(user.getUsername(), user);
-        } else System.out.println("Некорректный email \n");
-    }
-
-    public void updateEmail(User user, String newEmail) {
-        if (user != null && validation.isValidEmail(newEmail)) {
-            user.setEmail(newEmail);
-            userData.replace(user.getUsername(), user);
-        } else System.out.println("Email не обновлён \n");
-    }
+    private final Map<String, User> userData = new HashMap<>();
 
     public boolean createUser(String username, String password, String email) {
-        if (userData.containsKey(username)) {
-            System.out.println("Пользователь с таким логином уже существует.");
+        if (!validation.isValidUsername(username)) {
+            System.out.println("Неверное имя пользователя \n");
             return false;
         }
-        User user = new User(username, password, email);
-        userData.put(user.getUsername(), user);
-        System.out.println("Пользователь успешно добавлен");
+        if (validation.isValidPassword(password, username)) {
+            System.out.println("Неверный пароль \n");
+            return false;
+        }
+        if (validation.isValidEmail(email)) {
+            System.out.println("Неверный email \n");
+            return false;
+        }
+        User newUser = new User(username, password, email);
+        userData.put(username, newUser);
+        return true;
+    }
+
+    public boolean isUsernameAvailable(String username) {
+        return !userData.containsKey(username);
+    }
+
+    public boolean updatePassword(String username, String newPassword) {
+        User user = userData.get(username);
+        if (user == null) {
+            System.out.println("Пользователь не найден. \n");
+            return false;
+        }
+        if (validation.isValidPassword(newPassword, username)) {
+            System.out.println("Неверный пароль. \n");
+            return false;
+        }
+        user.setPassword(newPassword);
+        System.out.println("Пароль был успешно обновлен! \n");
+        return true;
+    }
+
+    public boolean updateEmail(String username, String newEmail) {
+        User user = userData.get(username);
+        if (user == null) {
+            System.out.println("Пользователь не найден \n");
+            return false;
+        }
+        if (validation.isValidEmail(newEmail)) {
+            System.out.println("Неверный формат email. \n");
+            return false;
+        }
+        user.setEmail(newEmail);
+        System.out.println("Email был успешно обновлен! \n");
         return true;
     }
 
     public String getAllUsers() {
         StringBuilder allUsers = new StringBuilder();
         for (Map.Entry<String, User> entry : userData.entrySet()) {
-            allUsers.append("Логин: ").append(entry.getKey())
+            allUsers.append("Логин: ")
+                    .append(entry.getKey())
+                    .append("\n")
                     .append("Email: ")
                     .append(entry.getValue().getEmail())
                     .append("\n");
-            }
+        }
         return allUsers.toString();
     }
 
     public boolean checkUsername(String username) {
-        return userData.containsKey(username);
+        if (userData.containsKey(username)) {
+            System.out.println("Пользователь с таким логином уже существует.");
+            return false;
+        } else return true;
     }
 
-    public void removeUser(String username) {
+    public boolean removeUser(String username) {
         if (userData.containsKey(username)) {
             userData.remove(username);
-            System.out.println("Пользователь удалён \n");
-        } else {
-            System.out.println("Пользователь не найден \n");
+            System.out.println("Пользователь был успешно удалён! \n");
+            return true;
         }
+        System.out.println("Пользователь не найден \n");
+        return false;
     }
 }

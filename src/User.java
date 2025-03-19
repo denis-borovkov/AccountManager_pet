@@ -7,9 +7,9 @@ public class User {
     private String email;
 
     public User(String username, String password, String email) {
-        this.username = username;
+        this.setUsername(username);
         this.setPassword(password);
-        this.email = email;
+        this.setEmail(email);
     }
 
     public void setUsername(String username) {
