@@ -1,12 +1,26 @@
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 import java.util.HashMap;
 
 public class UserManager {
 
     private final Validation validation = new Validation();
-    private final Map<String, User> userData = new HashMap<>();
+    private final Map<String, User> userDatabase = new HashMap<>();
+    private final File storageFile = new File("Users.json"); // Создает новый файл "Users.json"
+    private final ObjectMapper objectMapper = new ObjectMapper();  //
+
+    public UserManager() {
+        loadUsersFromFile();
+    }
 
     public boolean createUser(String username, String password, String email) {
+        if (userDatabase.containsKey(username)) {
+            return false;
+        }
         if (!validation.isValidUsername(username)) {
             System.out.println("Неверное имя пользователя \n");
             return false;
@@ -20,12 +34,13 @@ public class UserManager {
             return false;
         }
         User newUser = new User(username, password, email);
-        userData.put(username, newUser);
+        userDatabase.put(username, newUser);
+        saveUsersToFile();
         return true;
     }
 
     public boolean updatePassword(String username, String newPassword) {
-        User user = userData.get(username);
+        User user = userDatabase.get(username);
         if (user == null) {
             System.out.println("Пользователь не найден. \n");
             return false;
@@ -39,7 +54,7 @@ public class UserManager {
     }
 
     public boolean updateEmail(String username, String newEmail) {
-        User user = userData.get(username);
+        User user = userDatabase.get(username);
         if (user == null) {
             System.out.println("Пользователь не найден \n");
             return false;
@@ -54,7 +69,7 @@ public class UserManager {
     }
 
     public boolean isAuthenticated(String username, String password) {
-        User user = userData.get(username);
+        User user = userDatabase.get(username);
         if (user == null) {
             System.out.println("Нет пользователей для аутентификации \n");
             return false;
@@ -70,34 +85,53 @@ public class UserManager {
         return false;
     }
 
-    public String getAllUsers() {
-        StringBuilder allUsers = new StringBuilder();
-        for (Map.Entry<String, User> entry : userData.entrySet()) {
-            allUsers.append("Логин: ")
-                    .append(entry.getKey())
-                    .append("\n")
-                    .append("Email: ")
-                    .append(entry.getValue().getEmail())
-                    .append("\n");
+    public boolean listUsers() {
+        if (userDatabase.isEmpty()) {
+            return false;
         }
-        return allUsers.toString();
+        userDatabase.forEach(((username, user) ->
+                System.out.println("Имя пользователя " + username + "\n" + ", Email: " + user.getEmail())));
+        return true;
     }
 
+
     public boolean checkUsername(String username) {
-        return userData.containsKey(username);
+        return userDatabase.containsKey(username);
     }
 
     public boolean checkPassword(String username, String password) {
-        User user = userData.get(username);
+        User user = userDatabase.get(username);
         return user.checkPassword(password);
     }
 
     public boolean removeUser(String username) {
-        if (userData.containsKey(username)) {
-            userData.remove(username);
+        if (userDatabase.containsKey(username)) {
+            userDatabase.remove(username);
             return true;
         }
         System.out.println("Пользователь не найден \n");
         return false;
+    }
+
+    private void saveUsersToFile() {
+        try {
+            objectMapper.writeValue(storageFile, userDatabase);
+            System.out.println("Пользователи были успешно сохранены. \n");
+        } catch (IOException e) {
+            System.err.println("Не удалось сохранить пользователей " + e.getMessage());
+        }
+    }
+
+    private void loadUsersFromFile() {
+        if (storageFile.exists()) {
+            try {
+                Map<String, User> loadedUsers = objectMapper.readValue(storageFile, new TypeReference<>() {});
+                userDatabase.putAll(loadedUsers);
+                System.out.println("Пользователи были успешно загружены \n");
+
+            } catch (IOException e) {
+                System.err.println("Не удалось загрузить пользователей \n");
+            }
+        }
     }
 }

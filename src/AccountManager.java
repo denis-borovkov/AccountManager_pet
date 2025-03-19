@@ -35,8 +35,7 @@ public class AccountManager {
                             ⦁ Длина логина должна быть не менее 3 символов и не более 20 \s
                             ⦁ Логин должен начинаться с буквы и может содержать буквы, цифры и символ подчеркивания \s""");
 
-                    String username = "Kurwa228";
-
+                    String username = scanner.nextLine();
                         System.out.println();
 
                             System.out.println("""
@@ -46,7 +45,7 @@ public class AccountManager {
                                 ⦁ Пароль должен содержать хотя бы одну заглавную букву, \s
                                 одну строчную, одну цифру и один специальный символ (например, !, @, #, $, %, ^, &, *)""");
 
-                        String password = "12345678!Qq";
+                        String password = scanner.nextLine();
                         System.out.println();
 
                             System.out.println("""
@@ -54,7 +53,7 @@ public class AccountManager {
                                 ⦁ Email не должен быть пустым \s
                                 ⦁ Должен содержать символ '@'""");
 
-                        String email = "example@mail.ru";
+                        String email = scanner.nextLine();
                         System.out.println();
 
                         if (userManager.createUser(username, password, email))
@@ -67,10 +66,10 @@ public class AccountManager {
                         System.out.println("Войдите: ");
 
                         System.out.println("Введите логин: \n");
-                        String username = "Kurwa228";
+                        String username = scanner.nextLine();
 
                         System.out.println("Введите пароль: \n");
-                        String password = "12345678!Qq";
+                        String password = scanner.nextLine();
 
                         if (userManager.isAuthenticated(username,password))
                         System.out.println("Вы успешно вошли! \n");
@@ -80,8 +79,7 @@ public class AccountManager {
                 case 3: {
                     System.out.println("Просмотреть информацию о пользователе: \n");
 
-                    if (!userManager.getAllUsers().isEmpty()) {
-                        System.out.println(userManager.getAllUsers());
+                    if (userManager.listUsers()) {
 
                         System.out.println("""
                                 Выберите действие: \s
@@ -139,9 +137,7 @@ public class AccountManager {
                             case 5:
                                 break;
                         }
-                    } else {
-                        System.out.println("Нет доступной информации. \n");
-                    }
+                    } else System.out.println("Нет доступной информации. \n");
                 }
                     case 4: {
                         break;
