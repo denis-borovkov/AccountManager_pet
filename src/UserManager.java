@@ -25,12 +25,12 @@ public class UserManager {
             System.out.println("Неверное имя пользователя \n");
             return false;
         }
-        if (validation.isValidPassword(password, username)) {
-            System.out.println("Неверный пароль \n");
+        if (!validation.isValidPassword(password, username)) {
+            System.out.println("Неверный пароль. \n");
             return false;
         }
-        if (validation.isValidEmail(email)) {
-            System.out.println("Неверный email \n");
+        if (!validation.isValidEmail(email)) {
+            System.out.println("Неверный email. \n");
             return false;
         }
         User newUser = new User(username, password, email);
@@ -56,7 +56,7 @@ public class UserManager {
     public boolean updateEmail(String username, String newEmail) {
         User user = userDatabase.get(username);
         if (user == null) {
-            System.out.println("Пользователь не найден \n");
+            System.out.println("Пользователь не найден. \n");
             return false;
         }
         if (validation.isValidEmail(newEmail)) {
@@ -71,11 +71,11 @@ public class UserManager {
     public boolean isAuthenticated(String username, String password) {
         User user = userDatabase.get(username);
         if (user == null) {
-            System.out.println("Нет пользователей для аутентификации \n");
+            System.out.println("Нет пользователей для аутентификации. \n");
             return false;
         }
         if (username == null || password == null) {
-            System.out.println("Account and password cannot be null \n");
+            System.out.println("Account and password cannot be null! \n");
             return false;
         }
         if (username.equals(user.getUsername()) && user.checkPassword(password)) {
@@ -90,10 +90,9 @@ public class UserManager {
             return false;
         }
         userDatabase.forEach(((username, user) ->
-                System.out.println("Имя пользователя " + username + "\n" + ", Email: " + user.getEmail())));
+                System.out.println("Имя пользователя: " + username + "\n" + "Email: " + user.getEmail())));
         return true;
     }
-
 
     public boolean checkUsername(String username) {
         return userDatabase.containsKey(username);
