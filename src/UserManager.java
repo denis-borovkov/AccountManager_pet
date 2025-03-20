@@ -10,7 +10,7 @@ public class UserManager {
 
     private final Validation validation = new Validation();
     private final Map<String, User> userDatabase = new HashMap<>();
-    private final File storageFile = new File("Users.json"); // Создает новый файл "Users.json"
+    private final File storageFile = new File("users.json"); // Создает новый файл "users.json"
     private final ObjectMapper objectMapper = new ObjectMapper();  //
 
     public UserManager() {
@@ -90,7 +90,8 @@ public class UserManager {
             return false;
         }
         userDatabase.forEach(((username, user) ->
-                System.out.println("Имя пользователя: " + username + "\n" + "Email: " + user.getEmail())));
+                System.out.println("Имя пользователя: " + username +"\nEmail: " + user.getEmail())));
+        System.out.println();
         return true;
     }
 
@@ -106,6 +107,7 @@ public class UserManager {
     public boolean removeUser(String username) {
         if (userDatabase.containsKey(username)) {
             userDatabase.remove(username);
+            saveUsersToFile();
             return true;
         }
         System.out.println("Пользователь не найден \n");
@@ -115,22 +117,24 @@ public class UserManager {
     private void saveUsersToFile() {
         try {
             objectMapper.writeValue(storageFile, userDatabase);
-            System.out.println("Пользователи были успешно сохранены. \n");
+            System.out.println("Пользователи были успешно сохранены. ");
         } catch (IOException e) {
             System.err.println("Не удалось сохранить пользователей " + e.getMessage());
         }
     }
 
     private void loadUsersFromFile() {
-        if (storageFile.exists()) {
-            try {
-                Map<String, User> loadedUsers = objectMapper.readValue(storageFile, new TypeReference<>() {});
-                userDatabase.putAll(loadedUsers);
-                System.out.println("Пользователи были успешно загружены \n");
+        if (!storageFile.exists()) {
+            System.out.println("Не удалось найти файл пользователей \n");
+            return;
+        }
+        try {
+            Map<String, User> loadedUsers = objectMapper.readValue(storageFile, new TypeReference<>() {});
+            userDatabase.putAll(loadedUsers);
+            System.out.println("Пользователи были успешно загружены \n");
 
-            } catch (IOException e) {
-                System.err.println("Не удалось загрузить пользователей \n");
-            }
+        } catch (IOException e) {
+            System.err.println("Не удалось загрузить пользователей \n");
         }
     }
 }

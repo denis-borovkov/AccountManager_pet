@@ -35,7 +35,7 @@ public class AccountManager {
                             ⦁ Длина логина должна быть не менее 3 символов и не более 20 \s
                             ⦁ Логин должен начинаться с буквы и может содержать буквы, цифры и символ подчеркивания \s""");
 
-                    String username = scanner.nextLine();
+                    String username = "Kurwa228";
                         System.out.println();
 
                             System.out.println("""
@@ -45,7 +45,7 @@ public class AccountManager {
                                 ⦁ Пароль должен содержать хотя бы одну заглавную букву, \s
                                 одну строчную, одну цифру и один специальный символ (например, !, @, #, $, %, ^, &, *)""");
 
-                        String password = scanner.nextLine();
+                        String password = "12345678!Ww";
                         System.out.println();
 
                             System.out.println("""
@@ -53,7 +53,7 @@ public class AccountManager {
                                 ⦁ Email не должен быть пустым \s
                                 ⦁ Должен содержать символ '@'""");
 
-                        String email = scanner.nextLine();
+                        String email = "example@mail.ru";
                         System.out.println();
 
                         if (userManager.createUser(username, password, email))
@@ -62,7 +62,6 @@ public class AccountManager {
                     break;
                 }
                 case 2: {
-
                         System.out.println("Войдите: ");
 
                         System.out.println("Введите логин: \n");
@@ -92,12 +91,12 @@ public class AccountManager {
 
                             case 1:
                                 System.out.println("Введите логин:");
-
                                 String username = scanner.nextLine();
                                 System.out.println();
 
                                 if (userManager.checkUsername(username))
                                     if (userManager.removeUser(username))
+
                                         System.out.println("Пользователь успешно удален. \n");
                                 break;
                             case 2:
