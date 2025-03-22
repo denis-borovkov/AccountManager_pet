@@ -9,9 +9,11 @@ import java.util.HashMap;
 public class UserManager {
 
     private final Validation validation = new Validation();
+    private final Permission permission = new Permission();
     private final Map<String, User> userDatabase = new HashMap<>();
     private final File storageFile = new File("users.json"); // Создает новый файл "users.json"
     private final ObjectMapper objectMapper = new ObjectMapper();  //
+
 
     public UserManager() {
         loadUsersFromFile();
@@ -33,9 +35,9 @@ public class UserManager {
             System.out.println("Неверный email. \n");
             return false;
         }
-        User newUser = new User(username, password, email);
-        userDatabase.put(username, newUser);
-        saveUsersToFile();
+            User newUser = new User(username, password, email, permission.setUserRole());
+            userDatabase.put(username, newUser);
+            saveUsersToFile();
         return true;
     }
 
@@ -90,7 +92,7 @@ public class UserManager {
             return false;
         }
         userDatabase.forEach(((username, user) ->
-                System.out.println("Имя пользователя: " + username +"\nEmail: " + user.getEmail())));
+                System.out.println("Имя пользователя: " + username + "\nEmail: " + user.getEmail() + "\nРоль в системе: " + permission.getUserRole())));
         System.out.println();
         return true;
     }
@@ -102,6 +104,10 @@ public class UserManager {
     public boolean checkPassword(String username, String password) {
         User user = userDatabase.get(username);
         return user.checkPassword(password);
+    }
+
+    public UserRole checkRole(UserRole userRole) {
+        return userRole;
     }
 
     public boolean removeUser(String username) {
@@ -117,7 +123,6 @@ public class UserManager {
     private void saveUsersToFile() {
         try {
             objectMapper.writeValue(storageFile, userDatabase);
-            System.out.println("Пользователи были успешно сохранены. ");
         } catch (IOException e) {
             System.err.println("Не удалось сохранить пользователей " + e.getMessage());
         }
@@ -131,7 +136,6 @@ public class UserManager {
         try {
             Map<String, User> loadedUsers = objectMapper.readValue(storageFile, new TypeReference<>() {});
             userDatabase.putAll(loadedUsers);
-            System.out.println("Пользователи были успешно загружены \n");
 
         } catch (IOException e) {
             System.err.println("Не удалось загрузить пользователей \n");
