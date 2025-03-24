@@ -5,15 +5,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 public class UserManager {
 
+    private static final Logger logger = Logger.getLogger(UserManager.class.getName());
     private final Validation validation = new Validation();
-    private final Permission permission = new Permission();
     private final Map<String, User> userDatabase = new HashMap<>();
-    private final File storageFile = new File("users.json"); // Создает новый файл "users.json"
-    private final ObjectMapper objectMapper = new ObjectMapper();  //
-
+    private final File storageFile = new File("users.json");
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public UserManager() {
         loadUsersFromFile();
@@ -21,21 +21,22 @@ public class UserManager {
 
     public boolean createUser(String username, String password, String email) {
         if (userDatabase.containsKey(username)) {
+            logger.warning("Пользователь с таким логином уже существует.");
             return false;
         }
         if (!validation.isValidUsername(username)) {
-            System.out.println("Неверное имя пользователя \n");
+            logger.warning("Неверный логин.");
             return false;
         }
         if (!validation.isValidPassword(password, username)) {
-            System.out.println("Неверный пароль. \n");
+            logger.warning("Неверный пароль.");
             return false;
         }
         if (!validation.isValidEmail(email)) {
-            System.out.println("Неверный email. \n");
+            logger.warning("Неверный email.");
             return false;
         }
-            User newUser = new User(username, password, email, permission.setUserRole());
+            User newUser = new User(username, password, email, UserRole.USER);
             userDatabase.put(username, newUser);
             saveUsersToFile();
         return true;
@@ -44,70 +45,120 @@ public class UserManager {
     public boolean updatePassword(String username, String newPassword) {
         User user = userDatabase.get(username);
         if (user == null) {
-            System.out.println("Пользователь не найден. \n");
+            logger.warning("Пользователь не найден.");
             return false;
         }
         if (validation.isValidPassword(newPassword, username)) {
-            System.out.println("Неверный пароль. \n");
+            logger.warning("Неверный формат пароля.");
             return false;
         }
         user.setPassword(newPassword);
+        userDatabase.replace(username, user);
+        saveUsersToFile();
         return true;
     }
 
     public boolean updateEmail(String username, String newEmail) {
         User user = userDatabase.get(username);
         if (user == null) {
-            System.out.println("Пользователь не найден. \n");
+            logger.warning("Пользователь не найден." + username);
             return false;
         }
         if (validation.isValidEmail(newEmail)) {
-            System.out.println("Неверный формат email. \n");
+            logger.warning("Неверный формат email." + newEmail);
             return false;
         }
         user.setEmail(newEmail);
-        System.out.println("Email был успешно обновлен! \n");
+        userDatabase.replace(username, user);
+        logger.info("Email был успешно обновлен!");
+        saveUsersToFile();
         return true;
     }
 
     public boolean isAuthenticated(String username, String password) {
         User user = userDatabase.get(username);
         if (user == null) {
-            System.out.println("Нет пользователей для аутентификации. \n");
+            logger.warning("Нет пользователей для аутентификации." + username);
             return false;
         }
         if (username == null || password == null) {
-            System.out.println("Account and password cannot be null! \n");
+            logger.warning("Ошибка введенных данных.");
             return false;
         }
-        if (username.equals(user.getUsername()) && user.checkPassword(password)) {
+        if (userDatabase.containsKey(username) && user.checkPassword(password)) {
             return true;
         }
-        System.out.println("Неудачная аутентификация \n");
+        logger.warning("Неудачная аутентификация.");
         return false;
     }
 
-    public boolean listUsers() {
+    public void listUsers() {
         if (userDatabase.isEmpty()) {
-            return false;
+            logger.warning("Нет сохраненных пользователей.");
+            return;
         }
         userDatabase.forEach(((username, user) ->
-                System.out.println("Имя пользователя: " + username + "\nEmail: " + user.getEmail() + "\nРоль в системе: " + permission.getUserRole())));
+                System.out.println(
+                        "Имя пользователя: " + username +
+                        "\nПароль: " + user.getPassword() +
+                        "\nEmail: " + user.getEmail() +
+                        "\nРоль в системе: " + user.getUserRole())));
         System.out.println();
-        return true;
+    }
+
+    public void getAuthorisedUser(String username) {
+        User user = userDatabase.get(username);
+        System.out.println("Имя пользователя: " + username +
+                "\nEmail: " + user.getEmail() +
+                "\nРоль в системе: " + user.getUserRole());
     }
 
     public boolean checkUsername(String username) {
+        User user = userDatabase.get(username);
+        if (user == null) {
+            logger.warning("Пользователь не найден." + username);
+            return false;
+        }
         return userDatabase.containsKey(username);
     }
 
     public boolean checkPassword(String username, String password) {
-        User user = userDatabase.get(username);
+        User user  = userDatabase.get(username);
+        if (user == null) {
+            logger.warning("Пользователь не найден." + username);
+            return false;
+        }
         return user.checkPassword(password);
     }
 
-    public UserRole checkRole(UserRole userRole) {
-        return userRole;
+    public boolean checkRole(String username) {
+        User user = userDatabase.get(username);
+        if (user == null || user.getUserRole() == null) {
+            logger.warning("Пользователь не найден или роль не установлена." + username);
+            return false;
+        }
+        return true;
+    }
+    public void grantAdminRights(String username) {
+        User user = userDatabase.get(username);
+        if (user == null) {
+            logger.warning("Пользователь не найден." + username);
+            return;
+        }
+        user.setUserRole(UserRole.ADMIN);
+        logger.info(username + " теперь имеет права: " + user.getUserRole());
+        saveUsersToFile();
+    }
+
+    public void grantUserRights(String username) {
+        User user = userDatabase.get(username);
+        if (user == null) {
+            logger.warning("Пользователь не найден." + username);
+            return;
+        }
+        user.setUserRole(UserRole.USER);
+        logger.info(username + " теперь имеет права: " + user.getUserRole());
+        saveUsersToFile();
     }
 
     public boolean removeUser(String username) {
@@ -116,7 +167,7 @@ public class UserManager {
             saveUsersToFile();
             return true;
         }
-        System.out.println("Пользователь не найден \n");
+        logger.warning("Пользователь не найден в файлах пользователей\n");
         return false;
     }
 
@@ -124,13 +175,13 @@ public class UserManager {
         try {
             objectMapper.writeValue(storageFile, userDatabase);
         } catch (IOException e) {
-            System.err.println("Не удалось сохранить пользователей " + e.getMessage());
+            logger.severe("Не удалось сохранить пользователей " + e.getMessage());
         }
     }
 
     private void loadUsersFromFile() {
         if (!storageFile.exists()) {
-            System.out.println("Не удалось найти файл пользователей \n");
+            logger.warning("Не удалось найти файл пользователей. При первом сохранении будет создан новый файл. \n");
             return;
         }
         try {
@@ -138,7 +189,7 @@ public class UserManager {
             userDatabase.putAll(loadedUsers);
 
         } catch (IOException e) {
-            System.err.println("Не удалось загрузить пользователей \n");
+            logger.severe("Не удалось загрузить пользователей \n" + e.getMessage());
         }
     }
 }

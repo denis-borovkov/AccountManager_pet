@@ -9,7 +9,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="AccManager" target="21" />
+      <module name="AccountManager" target="21" />
     </bytecodeTargetLevel>
   </component>
 </project>
