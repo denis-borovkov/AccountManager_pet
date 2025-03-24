@@ -11,7 +11,7 @@ public class UserManager {
 
     private static final Logger logger = Logger.getLogger(UserManager.class.getName());
     private final Validation validation = new Validation();
-    private final Map<String, User> userDatabase = new HashMap<>();
+    public final Map<String, User> userDatabase = new HashMap<>();
     private final File storageFile = new File("users.json");
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -24,15 +24,15 @@ public class UserManager {
             logger.warning("Пользователь с таким логином уже существует.");
             return false;
         }
-        if (!validation.isValidUsername(username)) {
+        if (validation.isValidUsername(username)) {
             logger.warning("Неверный логин.");
             return false;
         }
-        if (!validation.isValidPassword(password, username)) {
+        if (validation.isValidPassword(password, username)) {
             logger.warning("Неверный пароль.");
             return false;
         }
-        if (!validation.isValidEmail(email)) {
+        if (validation.isValidEmail(email)) {
             logger.warning("Неверный email.");
             return false;
         }
@@ -70,7 +70,6 @@ public class UserManager {
         }
         user.setEmail(newEmail);
         userDatabase.replace(username, user);
-        logger.info("Email был успешно обновлен!");
         saveUsersToFile();
         return true;
     }
@@ -100,7 +99,6 @@ public class UserManager {
         userDatabase.forEach(((username, user) ->
                 System.out.println(
                         "Имя пользователя: " + username +
-                        "\nПароль: " + user.getPassword() +
                         "\nEmail: " + user.getEmail() +
                         "\nРоль в системе: " + user.getUserRole())));
         System.out.println();
@@ -131,34 +129,33 @@ public class UserManager {
         return user.checkPassword(password);
     }
 
-    public boolean checkRole(String username) {
-        User user = userDatabase.get(username);
-        if (user == null || user.getUserRole() == null) {
-            logger.warning("Пользователь не найден или роль не установлена." + username);
-            return false;
-        }
-        return true;
-    }
-    public void grantAdminRights(String username) {
+    public void grantAdminRights(String username, String rootPassword) {
         User user = userDatabase.get(username);
         if (user == null) {
             logger.warning("Пользователь не найден." + username);
             return;
         }
-        user.setUserRole(UserRole.ADMIN);
+        if (rootPassword.equals("777"))
+            user.setUserRole(UserRole.ADMIN);
         logger.info(username + " теперь имеет права: " + user.getUserRole());
         saveUsersToFile();
     }
 
-    public void grantUserRights(String username) {
+    public void grantUserRights(String username, String rootPassword) {
         User user = userDatabase.get(username);
         if (user == null) {
             logger.warning("Пользователь не найден." + username);
             return;
         }
-        user.setUserRole(UserRole.USER);
+        if (rootPassword.equals("777"))
+            user.setUserRole(UserRole.USER);
         logger.info(username + " теперь имеет права: " + user.getUserRole());
         saveUsersToFile();
+    }
+
+    public boolean isAdmin(String username) {
+        User user = userDatabase.get(username);
+        return user != null && user.getUserRole() == UserRole.ADMIN;
     }
 
     public boolean removeUser(String username) {

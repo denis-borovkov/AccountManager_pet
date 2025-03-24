@@ -42,7 +42,7 @@ public class Message {
         return "[" + timestamp + "] " + sender + " -> " + receiver + ": " + content;
     }
 
-/*    public void sendMessage(String sender, String receiver, String content) {
+    public void sendMessage(String sender, String receiver, String content) {
         if(userManager.userDatabase.containsKey(sender) || userManager.userDatabase.containsKey(receiver)) {
             System.out.println("Отправитель или получатель не найдены.");
             return;
@@ -51,6 +51,4 @@ public class Message {
         messageStorage.computeIfAbsent(receiver, k -> new ArrayList<>()).add(message);
         System.out.println("Сообщение отправлено от " + sender + " пользователю " + receiver + ".");
     }
-
- */
 }

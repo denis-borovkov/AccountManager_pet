@@ -14,8 +14,8 @@ public class AccountManager {
             System.out.println("""
                     Добро пожаловать! Выберите действие:\s
                     1. Зарегистрироваться\s
-                    2. Войти\s
-                    3. Выйти\s
+                    2. Войти в учетную запись\s
+                    3. Выйти из программы\s
                     """);
 
             try {
@@ -76,7 +76,7 @@ public class AccountManager {
                         logger.warning("Неверный логин или пароль \n");
                         break;
                     }
-                    if (userManager.checkRole(username)) {
+                    if (userManager.isAdmin(username)) {
                         do {
                             System.out.println("Добро пожаловать, " + username + "! Выберите действие:\n " +
                                     "1. Просмотреть информацию о пользователях:\n " +
@@ -96,7 +96,7 @@ public class AccountManager {
                                                 """);
                                         switch (userAction = Integer.parseInt(scanner.nextLine())) {
                                             case 1:
-                                                System.out.println("Введите имя пользователя: \n");
+                                                System.out.println("Введите имя пользователя:");
                                                 username = scanner.nextLine();
 
                                                 System.out.println("""
@@ -106,13 +106,20 @@ public class AccountManager {
                                                         """);
                                                 userAction = Integer.parseInt(scanner.nextLine());
                                                 if (userAction == 1) {
-                                                    userManager.grantAdminRights(username);
+                                                    System.out.println("Введите пароль администратора:");
+                                                    String rootPassword = scanner.nextLine();
+                                                    userManager.grantAdminRights(username, rootPassword);
+                                                    userAction = 5;
                                                     break;
                                                 } else if (userAction == 2) {
-                                                    userManager.grantUserRights(username);
-                                                } else {
+                                                    System.out.println("Введите пароль администратора:");
+                                                    String rootPassword = scanner.nextLine();
+                                                    userManager.grantUserRights(username, rootPassword);
+                                                    userAction = 5;
                                                     break;
-                                                }
+                                                } else if (userAction == 3) {
+                                                break;
+                                            }
                                             case 2:
                                                 break;
                                         }
@@ -123,20 +130,20 @@ public class AccountManager {
                                     username = scanner.nextLine();
                                     System.out.println();
 
-                                    System.out.println("Введите пароль: \n");
+                                    System.out.println("Введите пароль:");
                                     password = scanner.nextLine();
-                                    if (userManager.checkUsername(username) && userManager.checkPassword(username, password))
+                                    if (userManager.isAuthenticated(username, password))
                                         if (userManager.removeUser(username))
                                             logger.info("Пользователь успешно удален. \n");
                                     break;
                                 case 3:
-                                    System.out.println("Введите логин: \n");
+                                    System.out.println("Введите логин:");
                                     username = scanner.nextLine();
 
-                                    System.out.println("Введите старый пароль: \n");
+                                    System.out.println("Введите старый пароль:");
                                     String oldPassword = scanner.nextLine();
 
-                                    if (userManager.checkUsername(username) && userManager.checkPassword(username, oldPassword))
+                                    if (userManager.isAuthenticated(username, oldPassword))
                                         System.out.println("""
                                                 Введите новый пароль: \s
                                                 ⦁ Пароль не должен быть пустым \s
@@ -149,7 +156,7 @@ public class AccountManager {
                                         logger.info("Пароль был успешно изменен. \n");
                                     break;
                                 case 4:
-                                    System.out.println("Введите логин: \n");
+                                    System.out.println("Введите логин:");
                                     username = scanner.nextLine();
                                     System.out.println();
 
@@ -181,10 +188,10 @@ public class AccountManager {
                                     System.out.println();
                                     break;
                                 case 2:
-                                    System.out.println("Введите логин: \n");
+                                    System.out.println("Введите логин:");
                                     username = scanner.nextLine();
 
-                                    System.out.println("Введите старый пароль: \n");
+                                    System.out.println("Введите старый пароль:");
                                     String oldPassword = scanner.nextLine();
 
                                     if (userManager.checkUsername(username) && userManager.checkPassword(username, oldPassword))
@@ -200,7 +207,7 @@ public class AccountManager {
                                         logger.info("Пароль был успешно изменен. \n");
                                     break;
                                 case 3:
-                                    System.out.println("Введите логин: \n");
+                                    System.out.println("Введите логин:");
                                     username = scanner.nextLine();
                                     System.out.println();
 
@@ -220,7 +227,7 @@ public class AccountManager {
                         } while (userManager.isAuthenticated(username, password) && userAction != 5);
                     }
                 }
-                case 4: {
+                case 5: {
                     break;
                 }
             }
