@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
@@ -6,7 +7,8 @@ public class AccountManager {
 
         Scanner scanner = new Scanner(System.in);
         UserManager userManager = new UserManager();
-        final Logger logger = Logger.getLogger(AccountManager.class.getName());
+        Message message = new Message();
+        Logger logger = Logger.getLogger(AccountManager.class.getName());
 
         int userAction = 0;
 
@@ -35,7 +37,7 @@ public class AccountManager {
                             ⦁ Длина логина должна быть не менее 3 символов и не более 20 \s
                             ⦁ Логин должен начинаться с буквы и может содержать буквы, цифры и символ подчеркивания \n""");
 
-                    String username = "Kurwa228";
+                    String username = scanner.nextLine();
 
                     System.out.println("""
                             Введите пароль: \s
@@ -44,14 +46,14 @@ public class AccountManager {
                             ⦁ Пароль должен содержать хотя бы одну заглавную букву, \s
                             одну строчную, одну цифру и один специальный символ (например, !, @, #, $, %, ^, &, *) \n""");
 
-                    String password = "12345678!Ww";
+                    String password = scanner.nextLine();
 
                     System.out.println("""
                             Введите email:
                             ⦁ Email не должен быть пустым \s
                             ⦁ Должен содержать символ '@' \n""");
 
-                    String email = "example@mail.ru";
+                    String email = scanner.nextLine();
 
                     if (userManager.createUser(username, password, email)) {
                         logger.info("Вы успешно зарегистрировались! \n");
@@ -61,12 +63,10 @@ public class AccountManager {
                     break;
                 }
                 case 2: {
-
                     System.out.println("Войдите: \n");
 
                     System.out.println("Введите логин: ");
                     String username = scanner.nextLine();
-
                     System.out.println("Введите пароль: ");
                     String password = scanner.nextLine();
 
@@ -78,10 +78,10 @@ public class AccountManager {
                     }
                     if (userManager.isAdmin(username)) {
                         do {
-                            System.out.println("Добро пожаловать, " + username + "! Выберите действие:\n " +
-                                    "1. Просмотреть информацию о пользователях:\n " +
-                                    "2. Удалить пользователя\n " +
-                                    "3. Изменить пароль\n " +
+                            System.out.println("Добро пожаловать, " + username + "! Выберите действие:\n" +
+                                    "1. Просмотреть информацию о пользователях\n" +
+                                    "2. Удалить пользователя\n" +
+                                    "3. Изменить пароль\n" +
                                     "4. Изменить email\n" +
                                     "5. Выйти из учётной записи\n");
 
@@ -96,6 +96,8 @@ public class AccountManager {
                                                 """);
                                         switch (userAction = Integer.parseInt(scanner.nextLine())) {
                                             case 1:
+                                                System.out.println("Введите пароль администратора:");
+                                                String rootPassword = scanner.nextLine();
                                                 System.out.println("Введите имя пользователя:");
                                                 username = scanner.nextLine();
 
@@ -106,14 +108,10 @@ public class AccountManager {
                                                         """);
                                                 userAction = Integer.parseInt(scanner.nextLine());
                                                 if (userAction == 1) {
-                                                    System.out.println("Введите пароль администратора:");
-                                                    String rootPassword = scanner.nextLine();
                                                     userManager.grantAdminRights(username, rootPassword);
                                                     userAction = 5;
                                                     break;
                                                 } else if (userAction == 2) {
-                                                    System.out.println("Введите пароль администратора:");
-                                                    String rootPassword = scanner.nextLine();
                                                     userManager.grantUserRights(username, rootPassword);
                                                     userAction = 5;
                                                     break;
@@ -177,9 +175,10 @@ public class AccountManager {
                     } else {
                         do {
                             System.out.println("Добро пожаловать, " + username + "! Выберите действие:\n" +
-                                    "1. Просмотреть личную информацию:\n " +
-                                    "2. Изменить пароль\n " +
-                                    "3. Изменить email\n" +
+                                    "1. Просмотреть личную информацию\n" +
+                                    "2. Мои сообщения\n" +
+                                    "3. Изменить пароль\n" +
+                                    "4. Изменить email\n" +
                                     "5. Выйти из учётной записи\n");
 
                             switch (userAction = Integer.parseInt(scanner.nextLine())) {
@@ -188,6 +187,35 @@ public class AccountManager {
                                     System.out.println();
                                     break;
                                 case 2:
+                                    System.out.println("Последние сообщения:\n");
+                                    List<Message> messages = message.getMessage(username);
+                                    if (messages.isEmpty()) {
+                                        System.out.println("Нет сообщений для пользователя: " + username);
+                                    } else {
+                                        for (Message msg : messages) {
+                                            System.out.println(msg);
+                                        }
+                                    }
+
+                                    System.out.println("""
+                                            1. Отправить сообщение
+                                            2. Веруться назад
+                                            """);
+
+                                    userAction = Integer.parseInt(scanner.nextLine());
+                                    if (userAction == 1) {
+                                        System.out.println("Введите получателя:");
+                                        userManager.listUsers();
+                                        String receiver = scanner.nextLine();
+
+                                        System.out.println("Сообщение:");
+                                        String content = scanner.nextLine();
+                                        message.sendMessage(username, receiver, content);
+                                        break;
+                                    } else if (userAction == 2) {
+                                        break;
+                                    }
+                                case 3:
                                     System.out.println("Введите логин:");
                                     username = scanner.nextLine();
 
@@ -206,7 +234,7 @@ public class AccountManager {
                                     if (userManager.updatePassword(username, newPassword))
                                         logger.info("Пароль был успешно изменен. \n");
                                     break;
-                                case 3:
+                                case 4:
                                     System.out.println("Введите логин:");
                                     username = scanner.nextLine();
                                     System.out.println();

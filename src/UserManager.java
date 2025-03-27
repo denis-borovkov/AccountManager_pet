@@ -11,7 +11,7 @@ public class UserManager {
 
     private static final Logger logger = Logger.getLogger(UserManager.class.getName());
     private final Validation validation = new Validation();
-    public final Map<String, User> userDatabase = new HashMap<>();
+    private final Map<String, User> userDatabase = new HashMap<>();
     private final File storageFile = new File("users.json");
     private final ObjectMapper objectMapper = new ObjectMapper();
 

@@ -15,14 +15,10 @@ public class User implements Serializable {
     }
 
     public User(String username, String password, String email, UserRole userRole) {
-        setUsername(username);
-        setPassword(password);
-        setEmail(email);
-        this.userRole = userRole;
-    }
-
-    public void setUsername(String username) {
         this.username = username;
+        setPassword(password);
+        this.email = email;
+        this.userRole = userRole;
     }
 
     @JsonIgnore
