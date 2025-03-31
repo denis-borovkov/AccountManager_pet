@@ -10,8 +10,7 @@ public class Message {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yy HH:mm")
     private LocalDateTime timestamp;
 
-    public Message(){
-    }
+    public Message(){}
 
     public Message(String sender, String receiver, String content) {
         this.sender = sender;

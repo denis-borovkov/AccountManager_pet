@@ -171,7 +171,7 @@ public class AccountManager {
                                 case 3:
                                     System.out.println("Последние уведомления: " + user.getNotificationService()
                                             .notificationsCounter());
-                                    System.out.println(user.getNotificationService().showNotifications());
+                                    user.getNotificationService().showNotifications();
                                     break;
                                 case 4:
                                     System.out.println("Введите логин:");
