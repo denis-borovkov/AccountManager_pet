@@ -7,23 +7,17 @@ public class Message {
     private String sender;
     private String receiver;
     private String content;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yy HH:mm")
     private LocalDateTime timestamp;
-    private MessageService messageService;
+
+    public Message(){
+    }
 
     public Message(String sender, String receiver, String content) {
         this.sender = sender;
         this.receiver = receiver;
         this.content = content;
         this.timestamp = LocalDateTime.now();
-    }
-
-    public Message(MessageService messageService) {
-        this.messageService = messageService;
-    }
-
-    public MessageService getMessageService() {
-        return messageService;
     }
 
     public String getSender() {

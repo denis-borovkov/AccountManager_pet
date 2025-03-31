@@ -5,13 +5,11 @@ import java.util.logging.Logger;
 public class UserService {
 
     private static final Logger logger = Logger.getLogger(UserService.class.getName());
-    private final Validation validation = new Validation();
     private final Map<String, User> userDatabase = new HashMap<>();
-    private final FileService fileService;
+    private final Validation validation = new Validation();
+    FileService fileService = new FileService(this);
 
-    public UserService(FileService fileService) {
-        this.fileService = fileService;
-        fileService.setUserService(this);
+    public UserService() {
         fileService.loadUsersFromFile();
     }
 

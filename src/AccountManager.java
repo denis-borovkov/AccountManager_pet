@@ -6,11 +6,9 @@ public class AccountManager {
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
-        FileService fileService = new FileService();
-        UserService userService = new UserService(fileService);
-        fileService.setUserService(userService);
-        User user = new User(userService, new NotificationService());
-        Message message = new Message(new MessageService());
+        User user = new User();
+        UserService userService = new UserService();
+        MessageService messageService = new MessageService();
         Logger logger = Logger.getLogger(AccountManager.class.getName());
 
         int userAction = 0;
@@ -57,7 +55,7 @@ public class AccountManager {
 
                     String email = scanner.nextLine();
 
-                    if (user.getUserService().createUser(username, password, email)) {
+                    if (userService.createUser(username, password, email)) {
                         logger.info("Вы успешно зарегистрировались! \n");
                     } else {
                         logger.severe("Ошибка регистрации \n");
@@ -72,17 +70,15 @@ public class AccountManager {
                     System.out.println("Введите пароль: ");
                     String password = scanner.nextLine();
 
-                    if (user.getUserService().isAuthenticated(username, password)) {
+                    if (userService.isAuthenticated(username, password)) {
                         logger.info("Вы успешно вошли! \n");
                     } else {
                         logger.warning("Неверный логин или пароль \n");
                         break;
                     }
-                    if (user.getUserService().isAdmin(username)) {
+                    if (userService.isAdmin(username)) {
                         do {
-                            System.out.println("Добро пожаловать, " + username + "!\n У вас "
-                                    + user.getNotificationService().notificationsCounter()
-                                    + " новых уведомлений. Выберите действие:\n" +
+                            System.out.println("Добро пожаловать, " + username + "! Выберите действие:\n" +
                                     "1. Просмотреть информацию о пользователях\n" +
                                     "2. Мои сообщения\n" +
                                     "3. Мои уведомления\n" +
@@ -93,7 +89,7 @@ public class AccountManager {
                             switch (userAction = Integer.parseInt(scanner.nextLine())) {
                                 case 1:
                                     do {
-                                        user.getUserService().listUsers();
+                                        userService.listUsers();
                                         System.out.println("""
                                                 Выберите действие:\s
                                                 1. Изменение пользовательских прав\s
@@ -114,11 +110,11 @@ public class AccountManager {
                                                         """);
                                                 userAction = Integer.parseInt(scanner.nextLine());
                                                 if (userAction == 1) {
-                                                    user.getUserService().grantAdminRights(username, rootPassword);
+                                                    userService.grantAdminRights(username, rootPassword);
                                                     userAction = 5;
                                                     break;
                                                 } else if (userAction == 2) {
-                                                    user.getUserService().grantUserRights(username, rootPassword);
+                                                    userService.grantUserRights(username, rootPassword);
                                                     userAction = 5;
                                                     break;
                                                 } else if (userAction == 3) {
@@ -131,8 +127,8 @@ public class AccountManager {
 
                                                 System.out.println("Введите пароль:");
                                                 password = scanner.nextLine();
-                                                if (user.getUserService().isAuthenticated(username, password))
-                                                    if (user.getUserService().removeUser(username))
+                                                if (userService.isAuthenticated(username, password))
+                                                    if (userService.removeUser(username))
                                                         logger.info("Пользователь успешно удален. \n");
                                                 break;
                                             case 3:
@@ -142,7 +138,7 @@ public class AccountManager {
                                     break;
                                 case 2:
                                     System.out.println("Последние сообщения:\n");
-                                    List<Message> messages = message.getMessageService().getMessage(username);
+                                    List<Message> messages = messageService.getMessage(username);
                                     if (messages.isEmpty()) {
                                         System.out.println("Нет сообщений для пользователя: " + username);
                                     } else {
@@ -159,21 +155,22 @@ public class AccountManager {
                                     userAction = Integer.parseInt(scanner.nextLine());
                                     if (userAction == 1) {
                                         System.out.println("Введите получателя:");
-                                        user.getUserService().listUsers();
+                                        userService.listUsers();
                                         String receiverName = scanner.nextLine();
 
-                                        User sender = user.getUserService().getUserByName(username);
-                                        User receiver = user.getUserService().getUserByName(receiverName);
+                                        User sender = userService.getUserByName(username);
+                                        User receiver = userService.getUserByName(receiverName);
 
                                         System.out.println("Сообщение:");
                                         String content = scanner.nextLine();
-                                        message.getMessageService().sendMessage(sender, receiver, content);
+                                        messageService.sendMessage(sender, receiver, content);
                                         break;
                                     } else if (userAction == 2) {
                                         break;
                                     }
                                 case 3:
-                                    System.out.println("Последние уведомления:");
+                                    System.out.println("Последние уведомления: " + user.getNotificationService()
+                                            .notificationsCounter());
                                     System.out.println(user.getNotificationService().showNotifications());
                                     break;
                                 case 4:
@@ -183,7 +180,7 @@ public class AccountManager {
                                     System.out.println("Введите старый пароль:");
                                     String oldPassword = scanner.nextLine();
 
-                                    if (user.getUserService().isAuthenticated(username, oldPassword))
+                                    if (userService.isAuthenticated(username, oldPassword))
                                         System.out.println("""
                                                 Введите новый пароль: \s
                                                 ⦁ Пароль не должен быть пустым \s
@@ -192,7 +189,7 @@ public class AccountManager {
                                                 одну строчную, одну цифру и один специальный символ (например, !, @, #, $, %, ^, &, *)""");
 
                                     String newPassword = scanner.nextLine();
-                                    if (user.getUserService().updatePassword(username, newPassword))
+                                    if (userService.updatePassword(username, newPassword))
                                         logger.info("Пароль был успешно изменен. \n");
                                     break;
                                 case 5:
@@ -200,25 +197,23 @@ public class AccountManager {
                                     username = scanner.nextLine();
                                     System.out.println();
 
-                                    if (user.getUserService().checkUsername(username))
+                                    if (userService.checkUsername(username))
                                         System.out.println(("""
                                                 Введите новый email:
                                                 ⦁ Email не должен быть пустым \s
                                                 ⦁ Должен содержать символ '@'"""));
 
                                     String newEmail = scanner.nextLine();
-                                    if (user.getUserService().updateEmail(username, newEmail))
+                                    if (userService.updateEmail(username, newEmail))
                                         logger.info("Email был успешно изменен. \n");
                                     break;
                                 case 6:
                                     break;
                             }
-                        } while (user.getUserService().isAuthenticated(username, password) && userAction != 6);
+                        } while (userService.isAuthenticated(username, password) && userAction != 6);
                     } else {
                         do {
-                            System.out.println("Добро пожаловать, " + username + "!\n У вас "
-                                    + user.getNotificationService().notificationsCounter()
-                                    + " новых уведомлений. Выберите действие:\n" +
+                            System.out.println("Добро пожаловать, " + username + "! Выберите действие:\n" +
                                     "1. Просмотреть личную информацию\n" +
                                     "2. Мои сообщения\n" +
                                     "3. Мои уведомления\n" +
@@ -228,12 +223,12 @@ public class AccountManager {
 
                             switch (userAction = Integer.parseInt(scanner.nextLine())) {
                                 case 1:
-                                    user.getUserService().getAuthorisedUser(username);
+                                    userService.getAuthorisedUser(username);
                                     System.out.println();
                                     break;
                                 case 2:
                                     System.out.println("Последние сообщения:\n");
-                                    List<Message> messages = message.getMessageService().getMessage(username);
+                                    List<Message> messages = messageService.getMessage(username);
                                     if (messages.isEmpty()) {
                                         System.out.println("Нет сообщений для пользователя: " + username);
                                     } else {
@@ -250,21 +245,22 @@ public class AccountManager {
                                     userAction = Integer.parseInt(scanner.nextLine());
                                     if (userAction == 1) {
                                         System.out.println("Введите получателя:");
-                                        user.getUserService().listUsers();
+                                        userService.listUsers();
                                         String receiverName = scanner.nextLine();
 
-                                        User sender = user.getUserService().getUserByName(username);
-                                        User receiver = user.getUserService().getUserByName(receiverName);
+                                        User sender = userService.getUserByName(username);
+                                        User receiver = userService.getUserByName(receiverName);
 
                                         System.out.println("Сообщение:");
                                         String content = scanner.nextLine();
-                                        message.getMessageService().sendMessage(sender, receiver, content);
+                                        messageService.sendMessage(sender, receiver, content);
                                         break;
                                     } else if (userAction == 2) {
                                         break;
                                     }
                                 case 3:
-                                    System.out.println("Последние уведомления:\n");
+                                    System.out.println("Последние уведомления: " + user.getNotificationService()
+                                            .notificationsCounter());
                                     System.out.println(user.getNotificationService().showNotifications());
                                     break;
                                 case 4:
@@ -274,7 +270,7 @@ public class AccountManager {
                                     System.out.println("Введите старый пароль:");
                                     String oldPassword = scanner.nextLine();
 
-                                    if (user.getUserService().checkUsername(username) && user.getUserService().checkPassword(username, oldPassword))
+                                    if (userService.checkUsername(username) && userService.checkPassword(username, oldPassword))
                                         System.out.println("""
                                                 Введите новый пароль: \s
                                                 ⦁ Пароль не должен быть пустым \s
@@ -283,7 +279,7 @@ public class AccountManager {
                                                 одну строчную, одну цифру и один специальный символ (например, !, @, #, $, %, ^, &, *)""");
 
                                     String newPassword = scanner.nextLine();
-                                    if (user.getUserService().updatePassword(username, newPassword))
+                                    if (userService.updatePassword(username, newPassword))
                                         logger.info("Пароль был успешно изменен. \n");
                                     break;
                                 case 5:
@@ -291,20 +287,20 @@ public class AccountManager {
                                     username = scanner.nextLine();
                                     System.out.println();
 
-                                    if (user.getUserService().checkUsername(username))
+                                    if (userService.checkUsername(username))
                                         System.out.println(("""
                                                 Введите новый email:
                                                 ⦁ Email не должен быть пустым \s
                                                 ⦁ Должен содержать символ '@'"""));
 
                                     String newEmail = scanner.nextLine();
-                                    if (user.getUserService().updateEmail(username, newEmail))
+                                    if (userService.updateEmail(username, newEmail))
                                         logger.info("Email был успешно изменен. \n");
                                     break;
                                 case 6:
                                     break;
                             }
-                        } while (user.getUserService().isAuthenticated(username, password) && userAction != 6);
+                        } while (userService.isAuthenticated(username, password) && userAction != 6);
                     }
                 }
                 case 6: {

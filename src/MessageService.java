@@ -7,6 +7,11 @@ import java.util.Map;
 public class MessageService {
 
     private final Map<String, List<Message>> messageStorage = new HashMap<>();
+    FileService fileService = new FileService(this);
+
+    public MessageService() {
+        fileService.loadMessagesFromFile();
+    }
 
     public Map<String, List<Message>> getMessageStorage() {
         return messageStorage;
@@ -16,7 +21,8 @@ public class MessageService {
         Message message = new Message(sender.getUsername(), receiver.getUsername(), content);
         messageStorage.computeIfAbsent(receiver.getUsername(), k -> new ArrayList<>()).add(message);
         System.out.println("Сообщение отправлено от " + sender.getUsername() + " пользователю " + receiver.getUsername() + ".\n");
-        receiver.getNotificationService().addNotification("Новое сообщение от: " + sender + " для " + receiver);
+        receiver.getNotificationService().addNotification("Новое сообщение от: " + sender.getUsername() + " для " + receiver.getUsername());
+        fileService.saveMessagesToFile();
     }
 
     public List<Message> getMessage(String receiver) {

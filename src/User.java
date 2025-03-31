@@ -10,23 +10,10 @@ public class User implements Serializable {
     private String password;
     private String email;
     private UserRole userRole;
-
     @JsonIgnore
     private NotificationService notificationService;
 
-    @JsonIgnore
-    private UserService userService;
-
     public User() {
-    }
-
-    public User(UserService userService, NotificationService notificationService) {
-        this.userService = userService;
-        this.notificationService = notificationService;
-    }
-
-    public UserService getUserService() {
-        return userService;
     }
 
     public User(String username, String password, String email, UserRole userRole) {
