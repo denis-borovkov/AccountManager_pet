@@ -170,8 +170,8 @@ public class AccountManager {
                                     }
                                 case 3:
                                     System.out.println("Последние уведомления: " + user.getNotificationService()
-                                            .notificationsCounter());
-                                    user.getNotificationService().showNotifications();
+                                            .notificationsCounter(username));
+                                    user.getNotificationService().showNotifications(username);
                                     break;
                                 case 4:
                                     System.out.println("Введите логин:");
@@ -260,8 +260,8 @@ public class AccountManager {
                                     }
                                 case 3:
                                     System.out.println("Последние уведомления: " + user.getNotificationService()
-                                            .notificationsCounter());
-                                    System.out.println(user.getNotificationService().showNotifications());
+                                            .notificationsCounter(username));
+                                    System.out.println(user.getNotificationService().showNotifications(username));
                                     break;
                                 case 4:
                                     System.out.println("Введите логин:");

@@ -20,8 +20,13 @@ public class MessageService {
     public void sendMessage(User sender, User receiver, String content) {
         Message message = new Message(sender.getUsername(), receiver.getUsername(), content);
         messageStorage.computeIfAbsent(receiver.getUsername(), k -> new ArrayList<>()).add(message);
-        System.out.println("Сообщение отправлено от " + sender.getUsername() + " пользователю " + receiver.getUsername() + ".\n");
-        receiver.getNotificationService().addNotification("Новое сообщение от: " + sender.getUsername() + " для " + receiver.getUsername());
+        System.out.println("Сообщение отправлено от "
+                + sender.getUsername() + " пользователю "
+                + receiver.getUsername() + ".\n");
+        receiver.getNotificationService()
+                .addNotification(receiver.getUsername(),"Новое сообщение от: "
+                + sender.getUsername() + " для "
+                + receiver.getUsername());
         fileService.saveMessagesToFile();
     }
 

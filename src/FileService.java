@@ -4,9 +4,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.logging.Logger;
 
 public class FileService {
@@ -74,16 +74,21 @@ public class FileService {
         try {
             objectMapper.writeValue(notificationsFile, notificationService.getNotificationQueue());
         } catch (IOException e) {
-            logger.severe("Ошибка сохранения файла уведомлений.\n");
+            logger.severe("Ошибка сохранения уведомлений: " + e.getMessage());
         }
     }
 
     public void loadNotificationsFromFile() {
+        if (!notificationsFile.exists()) {
+            logger.warning("Файл уведомлений не найден, создаётся новый.");
+            return;
+        }
         try {
-            LinkedList<String> loadedNotifications = objectMapper.readValue(notificationsFile, new TypeReference<>() {});
-            notificationService.getNotificationQueue().addAll(loadedNotifications);
+            Map<String, Queue<Notification>> loadedNotifications = objectMapper.readValue(notificationsFile, new TypeReference<>() {});
+            notificationService.getNotificationQueue().putAll(loadedNotifications);
         } catch (IOException e) {
-            logger.severe("Ошибка загрузки файла уведомлений. Будет создан новый файл\n");
+            logger.severe("Ошибка загрузки уведомлений: " + e.getMessage());
         }
     }
+
 }

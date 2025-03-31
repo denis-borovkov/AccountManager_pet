@@ -174,5 +174,4 @@ public class UserService {
         logger.warning("Пользователь не найден в файлах пользователей\n");
         return false;
     }
-
 }
