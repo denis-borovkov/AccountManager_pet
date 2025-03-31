@@ -1,22 +1,22 @@
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
-public class UserManager {
+public class UserService {
 
-    private static final Logger logger = Logger.getLogger(UserManager.class.getName());
+    private static final Logger logger = Logger.getLogger(UserService.class.getName());
     private final Validation validation = new Validation();
     private final Map<String, User> userDatabase = new HashMap<>();
-    private final File storageFile = new File("users.json");
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final FileService fileService;
 
-    public UserManager() {
-        loadUsersFromFile();
+    public UserService(FileService fileService) {
+        this.fileService = fileService;
+        fileService.setUserService(this);
+        fileService.loadUsersFromFile();
+    }
+
+    public Map<String, User> getUserDatabase() {
+        return this.userDatabase;
     }
 
     public boolean createUser(String username, String password, String email) {
@@ -25,20 +25,20 @@ public class UserManager {
             return false;
         }
         if (validation.isValidUsername(username)) {
-            logger.warning("Неверный логин.");
+            logger.warning("Неверный формат логина.");
             return false;
         }
         if (validation.isValidPassword(password, username)) {
-            logger.warning("Неверный пароль.");
+            logger.warning("Неверный формат пароля.");
             return false;
         }
         if (validation.isValidEmail(email)) {
-            logger.warning("Неверный email.");
+            logger.warning("Неверный формат email.");
             return false;
         }
             User newUser = new User(username, password, email, UserRole.USER);
             userDatabase.put(username, newUser);
-            saveUsersToFile();
+            fileService.saveUsersToFile();
         return true;
     }
 
@@ -54,7 +54,7 @@ public class UserManager {
         }
         user.setPassword(newPassword);
         userDatabase.replace(username, user);
-        saveUsersToFile();
+        fileService.saveUsersToFile();
         return true;
     }
 
@@ -70,7 +70,7 @@ public class UserManager {
         }
         user.setEmail(newEmail);
         userDatabase.replace(username, user);
-        saveUsersToFile();
+        fileService.saveUsersToFile();
         return true;
     }
 
@@ -111,6 +111,15 @@ public class UserManager {
                 "\nРоль в системе: " + user.getUserRole());
     }
 
+    public User getUserByName(String username) {
+        for (User user : userDatabase.values()) {
+            if (user.getUsername().equals(username)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
     public boolean checkUsername(String username) {
         User user = userDatabase.get(username);
         if (user == null) {
@@ -138,7 +147,7 @@ public class UserManager {
         if (rootPassword.equals("777"))
             user.setUserRole(UserRole.ADMIN);
         logger.info(username + " теперь имеет права: " + user.getUserRole());
-        saveUsersToFile();
+        fileService.saveUsersToFile();
     }
 
     public void grantUserRights(String username, String rootPassword) {
@@ -150,7 +159,7 @@ public class UserManager {
         if (rootPassword.equals("777"))
             user.setUserRole(UserRole.USER);
         logger.info(username + " теперь имеет права: " + user.getUserRole());
-        saveUsersToFile();
+        fileService.saveUsersToFile();
     }
 
     public boolean isAdmin(String username) {
@@ -161,32 +170,11 @@ public class UserManager {
     public boolean removeUser(String username) {
         if (userDatabase.containsKey(username)) {
             userDatabase.remove(username);
-            saveUsersToFile();
+            fileService.saveUsersToFile();
             return true;
         }
         logger.warning("Пользователь не найден в файлах пользователей\n");
         return false;
     }
 
-    private void saveUsersToFile() {
-        try {
-            objectMapper.writeValue(storageFile, userDatabase);
-        } catch (IOException e) {
-            logger.severe("Не удалось сохранить пользователей " + e.getMessage());
-        }
-    }
-
-    private void loadUsersFromFile() {
-        if (!storageFile.exists()) {
-            logger.warning("Не удалось найти файл пользователей. При первом сохранении будет создан новый файл. \n");
-            return;
-        }
-        try {
-            Map<String, User> loadedUsers = objectMapper.readValue(storageFile, new TypeReference<>() {});
-            userDatabase.putAll(loadedUsers);
-
-        } catch (IOException e) {
-            logger.severe("Не удалось загрузить пользователей \n" + e.getMessage());
-        }
-    }
 }

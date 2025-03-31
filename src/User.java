@@ -11,7 +11,22 @@ public class User implements Serializable {
     private String email;
     private UserRole userRole;
 
+    @JsonIgnore
+    private NotificationService notificationService;
+
+    @JsonIgnore
+    private UserService userService;
+
     public User() {
+    }
+
+    public User(UserService userService, NotificationService notificationService) {
+        this.userService = userService;
+        this.notificationService = notificationService;
+    }
+
+    public UserService getUserService() {
+        return userService;
     }
 
     public User(String username, String password, String email, UserRole userRole) {
@@ -19,6 +34,13 @@ public class User implements Serializable {
         setPassword(password);
         this.email = email;
         this.userRole = userRole;
+        this.notificationService = new NotificationService();
+    }
+
+    public NotificationService getNotificationService() {
+        if (notificationService == null)
+            this.notificationService = new NotificationService();
+        return notificationService;
     }
 
     @JsonIgnore
