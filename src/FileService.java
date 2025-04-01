@@ -90,5 +90,4 @@ public class FileService {
             logger.severe("Ошибка загрузки уведомлений: " + e.getMessage());
         }
     }
-
 }

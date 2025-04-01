@@ -18,12 +18,13 @@ public class NotificationService {
     }
 
     public void addNotification(String username, String message) {
-        notificationQueue.computeIfAbsent(username, k -> new LinkedList<>()).add(new Notification(username, message));
+        notificationQueue.computeIfAbsent(username, k -> new LinkedList<>()).offer(new Notification(username, message));
         fileService.saveNotificationsToFile();
     }
 
     public Queue<Notification> showNotifications(String username) {
-        return notificationQueue.getOrDefault(username, new LinkedList<>());
+        Queue<Notification> notifications = notificationQueue.get(username);
+        return notifications != null ? notifications : new LinkedList<>();
     }
 
     public void readNotification(String username) {
@@ -33,7 +34,6 @@ public class NotificationService {
         }
         notificationQueue.get(username).poll();
         fileService.saveNotificationsToFile();
-        logger.info("Запрос на чтение уведомления и удаление его из очереди.\n");
     }
 
     public int notificationsCounter(String username) {

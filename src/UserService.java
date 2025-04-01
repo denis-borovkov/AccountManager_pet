@@ -7,7 +7,7 @@ public class UserService {
     private static final Logger logger = Logger.getLogger(UserService.class.getName());
     private final Map<String, User> userDatabase = new HashMap<>();
     private final Validation validation = new Validation();
-    FileService fileService = new FileService(this);
+    private final FileService fileService = new FileService(this);
 
     public UserService() {
         fileService.loadUsersFromFile();
@@ -100,6 +100,16 @@ public class UserService {
                         "\nEmail: " + user.getEmail() +
                         "\nРоль в системе: " + user.getUserRole())));
         System.out.println();
+    }
+
+    public void getUsersKeys() {
+        if (userDatabase.isEmpty()) {
+            logger.warning("Нет сохраненных пользователей.");
+            return;
+        }
+        for (String key : userDatabase.keySet()) {
+            System.out.println(key);
+        }
     }
 
     public void getAuthorisedUser(String username) {

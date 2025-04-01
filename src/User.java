@@ -1,16 +1,13 @@
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.mindrot.jbcrypt.BCrypt;
 
-public class User implements Serializable {
+public class User {
 
     private String username;
     private String password;
     private String email;
     private UserRole userRole;
-    @JsonIgnore
     private NotificationService notificationService;
 
     public User() {

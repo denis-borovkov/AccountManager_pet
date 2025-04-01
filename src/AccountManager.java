@@ -155,7 +155,7 @@ public class AccountManager {
                                     userAction = Integer.parseInt(scanner.nextLine());
                                     if (userAction == 1) {
                                         System.out.println("Введите получателя:");
-                                        userService.listUsers();
+                                        userService.getUsersKeys();
                                         String receiverName = scanner.nextLine();
 
                                         User sender = userService.getUserByName(username);
@@ -245,7 +245,7 @@ public class AccountManager {
                                     userAction = Integer.parseInt(scanner.nextLine());
                                     if (userAction == 1) {
                                         System.out.println("Введите получателя:");
-                                        userService.listUsers();
+                                        userService.getUsersKeys();
                                         String receiverName = scanner.nextLine();
 
                                         User sender = userService.getUserByName(username);
@@ -259,9 +259,34 @@ public class AccountManager {
                                         break;
                                     }
                                 case 3:
+                                    do {
                                     System.out.println("Последние уведомления: " + user.getNotificationService()
                                             .notificationsCounter(username));
                                     System.out.println(user.getNotificationService().showNotifications(username));
+
+                                        System.out.println("""
+                                                1. Прочесть уведомление.
+                                                2. Отметить все уведомления как прочтенные.
+                                                3. Вернуться назад.""");
+                                        switch (userAction = Integer.parseInt(scanner.nextLine())) {
+                                            case 1:
+                                                if(user.getNotificationService().notificationsCounter(username) == 0) {
+                                                    System.out.println("Нет уведомлений для прочтения.\n");
+                                                } else {
+                                                    user.getNotificationService().readNotification(username);
+                                                }
+                                                break;
+                                            case 2:
+                                                if (user.getNotificationService().notificationsCounter(username) == 0) {
+                                                    System.out.println("Нет уведомлений для прочтения.\n");
+                                                } else {
+                                                    user.getNotificationService().readAllNotifications(username);
+                                                }
+                                                break;
+                                            case 3:
+                                                break;
+                                        }
+                                    } while (userAction != 3);
                                     break;
                                 case 4:
                                     System.out.println("Введите логин:");
