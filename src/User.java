@@ -10,8 +10,7 @@ public class User {
     private UserRole userRole;
     private NotificationService notificationService;
 
-    public User() {
-    }
+    public User() {}
 
     public User(String username, String password, String email, UserRole userRole) {
         this.username = username;

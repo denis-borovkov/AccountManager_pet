@@ -7,6 +7,7 @@ public class AccountManager {
 
         Scanner scanner = new Scanner(System.in);
         User user = new User();
+        AuthenticationService authenticationService = new AuthenticationService();
         UserService userService = new UserService();
         MessageService messageService = new MessageService();
         Logger logger = Logger.getLogger(AccountManager.class.getName());
@@ -69,8 +70,7 @@ public class AccountManager {
                     String username = scanner.nextLine();
                     System.out.println("Введите пароль: ");
                     String password = scanner.nextLine();
-
-                    if (userService.isAuthenticated(username, password)) {
+                    if (authenticationService.isAuthenticated(username, password)) {
                         logger.info("Вы успешно вошли! \n");
                     } else {
                         logger.warning("Неверный логин или пароль \n");
@@ -127,7 +127,7 @@ public class AccountManager {
 
                                                 System.out.println("Введите пароль:");
                                                 password = scanner.nextLine();
-                                                if (userService.isAuthenticated(username, password))
+                                                if (authenticationService.isAuthenticated(username, password))
                                                     if (userService.removeUser(username))
                                                         logger.info("Пользователь успешно удален. \n");
                                                 break;
@@ -154,7 +154,7 @@ public class AccountManager {
 
                                     userAction = Integer.parseInt(scanner.nextLine());
                                     if (userAction == 1) {
-                                        System.out.println("Введите получателя:");
+                                        System.out.println("Введите получателя:\n");
                                         userService.getUsersKeys();
                                         String receiverName = scanner.nextLine();
 
@@ -180,7 +180,7 @@ public class AccountManager {
                                     System.out.println("Введите старый пароль:");
                                     String oldPassword = scanner.nextLine();
 
-                                    if (userService.isAuthenticated(username, oldPassword))
+                                    if (authenticationService.isAuthenticated(username, oldPassword))
                                         System.out.println("""
                                                 Введите новый пароль: \s
                                                 ⦁ Пароль не должен быть пустым \s
@@ -210,7 +210,7 @@ public class AccountManager {
                                 case 6:
                                     break;
                             }
-                        } while (userService.isAuthenticated(username, password) && userAction != 6);
+                        } while (authenticationService.isAuthenticated(username, password) && userAction != 6);
                     } else {
                         do {
                             System.out.println("Добро пожаловать, " + username + "! Выберите действие:\n" +
@@ -244,7 +244,7 @@ public class AccountManager {
 
                                     userAction = Integer.parseInt(scanner.nextLine());
                                     if (userAction == 1) {
-                                        System.out.println("Введите получателя:");
+                                        System.out.println("Введите получателя:\n");
                                         userService.getUsersKeys();
                                         String receiverName = scanner.nextLine();
 
@@ -325,7 +325,7 @@ public class AccountManager {
                                 case 6:
                                     break;
                             }
-                        } while (userService.isAuthenticated(username, password) && userAction != 6);
+                        } while (authenticationService.isAuthenticated(username, password) && userAction != 6);
                     }
                 }
                 case 6: {

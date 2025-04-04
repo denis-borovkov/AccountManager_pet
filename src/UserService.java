@@ -72,23 +72,6 @@ public class UserService {
         return true;
     }
 
-    public boolean isAuthenticated(String username, String password) {
-        User user = userDatabase.get(username);
-        if (user == null) {
-            logger.warning("Нет пользователей для аутентификации." + username);
-            return false;
-        }
-        if (username == null || password == null) {
-            logger.warning("Ошибка введенных данных.");
-            return false;
-        }
-        if (userDatabase.containsKey(username) && user.checkPassword(password)) {
-            return true;
-        }
-        logger.warning("Неудачная аутентификация.");
-        return false;
-    }
-
     public void listUsers() {
         if (userDatabase.isEmpty()) {
             logger.warning("Нет сохраненных пользователей.");

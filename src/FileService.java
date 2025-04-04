@@ -14,9 +14,12 @@ public class FileService {
     private final File storageFile = new File("users.json");
     private final File messagesFile = new File("messages.json");
     private final File notificationsFile = new File("notifications.json");
+    private final File authenticationData = new File("authdata.json");
+
     private MessageService messageService;
     private UserService userService;
     private NotificationService notificationService;
+    private AuthenticationService authenticationService;
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private final Logger logger = Logger.getLogger(FileService.class.getName());
 
@@ -34,6 +37,10 @@ public class FileService {
 
     public FileService(NotificationService notificationService) {
         this.notificationService = notificationService;
+    }
+
+    public FileService(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
     }
 
     public void saveUsersToFile() {
@@ -88,6 +95,26 @@ public class FileService {
             notificationService.getNotificationQueue().putAll(loadedNotifications);
         } catch (IOException e) {
             logger.severe("Ошибка загрузки уведомлений: " + e.getMessage());
+        }
+    }
+    public void saveAuthDataToFile() {
+        try {
+            objectMapper.writeValue(authenticationData, authenticationService.getAuthData());
+        } catch (IOException e) {
+            logger.severe("Не удалось сохранить пользователей " + e.getMessage());
+        }
+    }
+
+    public void loadAuthDataFromFile() {
+        if (!authenticationData.exists()) {
+            logger.warning("Файл пользовательских ключей не найден, создаётся новый.");
+            return;
+        }
+        try {
+            Map<String, String> loadedAuthData = objectMapper.readValue(authenticationData, new TypeReference<>() {});
+            authenticationService.getAuthData().putAll(loadedAuthData);
+        } catch (IOException e) {
+            logger.severe("Не удалось загрузить пользователей. Будет создан новый файл. \n" + e.getMessage());
         }
     }
 }
