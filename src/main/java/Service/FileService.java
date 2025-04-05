@@ -1,6 +1,11 @@
+package main.java.Service;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import main.java.Utility.Message;
+import main.java.Utility.Notification;
+import main.java.Utility.User;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,10 +16,10 @@ import java.util.logging.Logger;
 
 public class FileService {
 
-    private final File storageFile = new File("users.json");
-    private final File messagesFile = new File("messages.json");
-    private final File notificationsFile = new File("notifications.json");
-    private final File authenticationData = new File("authdata.json");
+    private final File storageFile = new File("main/resources/users.json");
+    private final File messagesFile = new File("main/resources/messages.json");
+    private final File notificationsFile = new File("main/resources/notifications.json");
+    private final File authenticationDataFile = new File("main/resources/authdata.json");
 
     private MessageService messageService;
     private UserService userService;
@@ -99,19 +104,19 @@ public class FileService {
     }
     public void saveAuthDataToFile() {
         try {
-            objectMapper.writeValue(authenticationData, authenticationService.getAuthData());
+            objectMapper.writeValue(authenticationDataFile, authenticationService.getAuthData());
         } catch (IOException e) {
             logger.severe("Не удалось сохранить пользователей " + e.getMessage());
         }
     }
 
     public void loadAuthDataFromFile() {
-        if (!authenticationData.exists()) {
+        if (!authenticationDataFile.exists()) {
             logger.warning("Файл пользовательских ключей не найден, создаётся новый.");
             return;
         }
         try {
-            Map<String, String> loadedAuthData = objectMapper.readValue(authenticationData, new TypeReference<>() {});
+            Map<String, String> loadedAuthData = objectMapper.readValue(authenticationDataFile, new TypeReference<>() {});
             authenticationService.getAuthData().putAll(loadedAuthData);
         } catch (IOException e) {
             logger.severe("Не удалось загрузить пользователей. Будет создан новый файл. \n" + e.getMessage());

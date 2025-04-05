@@ -1,8 +1,13 @@
+package main.java.Service;
+
+import main.java.Utility.Message;
+import main.java.Utility.User;
+
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
-public class AccountManager {
+public class AccountService {
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
@@ -10,11 +15,14 @@ public class AccountManager {
         AuthenticationService authenticationService = new AuthenticationService();
         UserService userService = new UserService();
         MessageService messageService = new MessageService();
-        Logger logger = Logger.getLogger(AccountManager.class.getName());
+        Logger logger = Logger.getLogger(AccountService.class.getName());
 
         int userAction = 0;
 
         do {
+            if (authenticationService.isTokenValid(authenticationService.getAuthData().toString())) {
+                break;
+            }
             System.out.println("""
                     Добро пожаловать! Выберите действие:\s
                     1. Зарегистрироваться\s

@@ -1,3 +1,5 @@
+package main.java.Utility;
+
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import javax.crypto.SecretKey;

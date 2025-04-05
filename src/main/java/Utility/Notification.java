@@ -1,3 +1,5 @@
+package main.java.Utility;
+
 public class Notification {
 
     private String username;

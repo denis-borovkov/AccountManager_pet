@@ -1,5 +1,8 @@
+package main.java.Utility;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import main.java.Service.NotificationService;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class User {
