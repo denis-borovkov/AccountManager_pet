@@ -1,5 +1,7 @@
 package main.java.Service;
 
+import main.java.Command.RegisterUserHandler;
+import main.java.Utility.ConsoleUI;
 import main.java.Utility.Message;
 import main.java.Utility.User;
 
@@ -11,89 +13,28 @@ public class AccountService {
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
+        RegisterUserHandler registerUserHandler = new RegisterUserHandler(new UserService());
+        MenuHandler menuHandler = new MenuHandler(registerUserHandler);
+        ConsoleUI ui = new ConsoleUI();
         User user = new User();
         AuthenticationService authenticationService = new AuthenticationService();
         UserService userService = new UserService();
         MessageService messageService = new MessageService();
         Logger logger = Logger.getLogger(AccountService.class.getName());
 
-        int userAction = 0;
+        int userAction;
 
         do {
-            if (authenticationService.isTokenValid(authenticationService.getAuthData().toString())) {
-                break;
-            }
-            System.out.println("""
-                    Добро пожаловать! Выберите действие:\s
-                    1. Зарегистрироваться\s
-                    2. Войти в учетную запись\s
-                    3. Выйти из программы\s
-                    """);
-
-            try {
-                userAction = Integer.parseInt(scanner.nextLine());
-            } catch (NumberFormatException | IllegalStateException e) {
-                logger.warning("Ошибка ввода. Введите корректную команду. \n");
-                continue;
-            }
+            menuHandler.showWelcomeMenu();
+            userAction = ui.readInt(String.valueOf(userAction));
             switch (userAction) {
-                case 1: {
-                    System.out.println("Регистрация: \n");
-
-                    System.out.println("""
-                            Введите логин: \s
-                            ⦁ Логин не должен быть пустым\s
-                            ⦁ Длина логина должна быть не менее 3 символов и не более 20 \s
-                            ⦁ Логин должен начинаться с буквы и может содержать буквы, цифры и символ подчеркивания \n""");
-
-                    String username = scanner.nextLine();
-
-                    System.out.println("""
-                            Введите пароль: \s
-                            ⦁ Пароль не должен быть пустым \s
-                            ⦁ Длина пароля должна быть не менее 8 символов \s
-                            ⦁ Пароль должен содержать хотя бы одну заглавную букву, \s
-                            одну строчную, одну цифру и один специальный символ (например, !, @, #, $, %, ^, &, *) \n""");
-
-                    String password = scanner.nextLine();
-
-                    System.out.println("""
-                            Введите email:
-                            ⦁ Email не должен быть пустым \s
-                            ⦁ Должен содержать символ '@' \n""");
-
-                    String email = scanner.nextLine();
-
-                    if (userService.createUser(username, password, email)) {
-                        logger.info("Вы успешно зарегистрировались! \n");
-                    } else {
-                        logger.severe("Ошибка регистрации \n");
+                case 1 -> menuHandler.handleRegistration();
+                case 2 -> menuHandler.handleLogin();
                     }
-                    break;
-                }
-                case 2: {
-                    System.out.println("Войдите: \n");
-
-                    System.out.println("Введите логин: ");
-                    String username = scanner.nextLine();
-                    System.out.println("Введите пароль: ");
-                    String password = scanner.nextLine();
-                    if (authenticationService.isAuthenticated(username, password)) {
-                        logger.info("Вы успешно вошли! \n");
-                    } else {
-                        logger.warning("Неверный логин или пароль \n");
-                        break;
-                    }
-                    if (userService.isAdmin(username)) {
+                    if (userService.isAdmin(user)) {
                         do {
-                            System.out.println("Добро пожаловать, " + username + "! Выберите действие:\n" +
-                                    "1. Просмотреть информацию о пользователях\n" +
-                                    "2. Мои сообщения\n" +
-                                    "3. Мои уведомления\n" +
-                                    "4. Изменить пароль\n" +
-                                    "5. Изменить email\n" +
-                                    "6. Выйти из учётной записи\n");
-
+                            menuHandler.showAdminMenu();
+                            userAction = ui.readInt(String.valueOf(userAction));
                             switch (userAction = Integer.parseInt(scanner.nextLine())) {
                                 case 1:
                                     do {

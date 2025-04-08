@@ -1,8 +1,8 @@
-package main.java.Utility;
+package main.java.Service;
 
 import java.util.regex.Pattern;
 
-public class Validation {
+public class ValidationService {
 
     public boolean isValidUsername(String username) {
         if (username == null || username.length() < 3 || username.length() > 20) {

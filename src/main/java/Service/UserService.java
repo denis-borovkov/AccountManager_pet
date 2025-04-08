@@ -1,8 +1,8 @@
 package main.java.Service;
 
+import main.java.Command.RegisterUserCommand;
 import main.java.Utility.User;
 import main.java.Utility.UserRole;
-import main.java.Utility.Validation;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -12,7 +12,7 @@ public class UserService {
 
     private static final Logger logger = Logger.getLogger(UserService.class.getName());
     private final Map<String, User> userDatabase = new HashMap<>();
-    private final Validation validation = new Validation();
+    private final ValidationService validationService = new ValidationService();
     private final FileService fileService = new FileService(this);
 
     public UserService() {
@@ -28,21 +28,22 @@ public class UserService {
             logger.warning("Пользователь с таким логином уже существует.");
             return false;
         }
-        if (validation.isValidUsername(username)) {
+        if (validationService.isValidUsername(username)) {
             logger.warning("Неверный формат логина.");
             return false;
         }
-        if (validation.isValidPassword(password, username)) {
+        if (validationService.isValidPassword(password, username)) {
             logger.warning("Неверный формат пароля.");
             return false;
         }
-        if (validation.isValidEmail(email)) {
+        if (validationService.isValidEmail(email)) {
             logger.warning("Неверный формат email.");
             return false;
         }
-            User newUser = new User(username, password, email, UserRole.USER);
-            userDatabase.put(username, newUser);
-            fileService.saveUsersToFile();
+        User newUser = new User(username, password, email, UserRole.USER);
+        new RegisterUserCommand(newUser);
+        userDatabase.put(username, newUser);
+        fileService.saveUsersToFile();
         return true;
     }
 
@@ -52,7 +53,7 @@ public class UserService {
             logger.warning("Пользователь не найден.");
             return false;
         }
-        if (validation.isValidPassword(newPassword, username)) {
+        if (validationService.isValidPassword(newPassword, username)) {
             logger.warning("Неверный формат пароля.");
             return false;
         }
@@ -68,7 +69,7 @@ public class UserService {
             logger.warning("Пользователь не найден." + username);
             return false;
         }
-        if (validation.isValidEmail(newEmail)) {
+        if (validationService.isValidEmail(newEmail)) {
             logger.warning("Неверный формат email." + newEmail);
             return false;
         }
@@ -159,8 +160,8 @@ public class UserService {
         fileService.saveUsersToFile();
     }
 
-    public boolean isAdmin(String username) {
-        User user = userDatabase.get(username);
+    public boolean isAdmin(User user) {
+        user = userDatabase.get(user.getUsername());
         return user != null && user.getUserRole() == UserRole.ADMIN;
     }
 
