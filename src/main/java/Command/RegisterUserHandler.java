@@ -1,7 +1,7 @@
 package main.java.Command;
 
 import main.java.Service.UserService;
-import main.java.Utility.User;
+import main.java.Model.User;
 
 public class RegisterUserHandler {
 
@@ -13,6 +13,6 @@ public class RegisterUserHandler {
 
     public boolean handle(RegisterUserCommand command) {
         User user = command.user();
-        return userService.createUser(user.getUsername(), user.getPassword(), user.getEmail());
+        return userService.createUser(user);
     }
 }

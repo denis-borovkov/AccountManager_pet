@@ -1,7 +1,7 @@
 package main.java.Service;
 
-import main.java.Utility.Message;
-import main.java.Utility.User;
+import main.java.Model.Message;
+import main.java.Model.User;
 
 import java.util.ArrayList;
 import java.util.Collections;

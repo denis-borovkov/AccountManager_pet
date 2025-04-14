@@ -1,4 +1,4 @@
-package main.java.Utility;
+package main.java.Model;
 
 public class Notification {
 

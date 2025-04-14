@@ -1,8 +1,9 @@
 package main.java.Service;
 
 import main.java.Utility.JwtUtil;
-import main.java.Utility.User;
+import main.java.Model.User;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -13,8 +14,10 @@ public class AuthenticationService {
 
     private final Logger logger = Logger.getLogger(AuthenticationService.class.getName());
     private final Map<String, String> authData = new HashMap<>();
-    UserService userService = new UserService();
+    UserService userService;
     FileService fileService = new FileService(this);
+    Date lastLogin;
+    Date lastLogout;
 
     public AuthenticationService() {
         fileService.loadAuthDataFromFile();
@@ -51,6 +54,14 @@ public class AuthenticationService {
 
     public String getUsername() {
         return username;
+    }
+
+    public void login() {
+        System.out.println("Пользователь" + username + "вошел в систему в: " + lastLogin.toString());
+    }
+
+    public void logout() {
+        System.out.println("Пользователь" + username + "вышел из системы в: " + lastLogout.toString());
     }
 
     public boolean isAuthenticated(String username, String password) {

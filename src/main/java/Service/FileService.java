@@ -3,9 +3,10 @@ package main.java.Service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import main.java.Utility.Message;
-import main.java.Utility.Notification;
-import main.java.Utility.User;
+import main.java.Model.Message;
+import main.java.Model.Notification;
+import main.java.Model.User;
+import main.java.repository.UserRepository;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,10 +17,10 @@ import java.util.logging.Logger;
 
 public class FileService {
 
-    private final File storageFile = new File("main/resources/users.json");
-    private final File messagesFile = new File("main/resources/messages.json");
-    private final File notificationsFile = new File("main/resources/notifications.json");
-    private final File authenticationDataFile = new File("main/resources/authdata.json");
+    private final File storageFile = new File("src/main/resources/users.json");
+    private final File messagesFile = new File("src/main/resources/messages.json");
+    private final File notificationsFile = new File("src/main/resources/notifications.json");
+    private final File authenticationDataFile = new File("src/main/resources/authdata.json");
 
     private MessageService messageService;
     private UserService userService;
@@ -48,18 +49,18 @@ public class FileService {
         this.authenticationService = authenticationService;
     }
 
-    public void saveUsersToFile() {
+    public void saveUsersToFile(UserRepository userDatabase) {
         try {
-            objectMapper.writeValue(storageFile, userService.getUserDatabase());
+            objectMapper.writeValue(storageFile, userDatabase.getUserDatabase());
         } catch (IOException e) {
-            logger.severe("Не удалось сохранить пользователей " + e.getMessage());
+            logger.severe("Не удалось сохранить пользователей " + e.fillInStackTrace());
         }
     }
 
-    public void loadUsersFromFile() {
+    public void loadUsersFromFile(UserRepository userDatabase) {
         try {
             Map<String, User> loadedUsers = objectMapper.readValue(storageFile, new TypeReference<>() {});
-            userService.getUserDatabase().putAll(loadedUsers);
+            userDatabase.addAll(loadedUsers);
         } catch (IOException e) {
             logger.severe("Не удалось загрузить пользователей. Будет создан новый файл. \n" + e.getMessage());
         }

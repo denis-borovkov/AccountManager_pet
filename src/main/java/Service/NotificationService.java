@@ -1,6 +1,6 @@
 package main.java.Service;
 
-import main.java.Utility.Notification;
+import main.java.Model.Notification;
 
 import java.util.HashMap;
 import java.util.LinkedList;

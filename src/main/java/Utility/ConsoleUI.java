@@ -21,15 +21,13 @@ public class ConsoleUI {
         System.out.println(message);
     }
 
-    public String readLine(String prompt) {
-        print(prompt);
+    public String readLine() {
         return scanner.nextLine();
     }
 
-    public int readInt(String prompt) {
+    public int readInt() {
         while (true) {
             try {
-                print(prompt);
                 return Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
                 logger.warning("Введите корректное число, попробуйте снова.");
