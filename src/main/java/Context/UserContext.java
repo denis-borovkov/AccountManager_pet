@@ -1,7 +1,7 @@
-package main.java.Context;
+package Context;
 
-import main.java.Abstract.AbstractUser;
-import main.java.interfaces.State;
+import Abstract.AbstractUser;
+import interfaces.State;
 
 public class UserContext implements State {
 
@@ -11,6 +11,7 @@ public class UserContext implements State {
         return this.currentUser = user;
     }
 
+    @Override
     public void showMenu() {
         if (currentUser != null) {
             currentUser.showMenu();

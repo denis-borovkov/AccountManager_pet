@@ -1,10 +1,10 @@
-package main.java.Abstract;
+package Abstract;
 
-import main.java.Model.Role;
-import main.java.interfaces.State;
+import Model.Role;
+import Utility.SecurityUtil;
 
 
-public abstract class AbstractUser implements State {
+public abstract class AbstractUser {
 
     private Long id;
     private String username;
@@ -17,11 +17,10 @@ public abstract class AbstractUser implements State {
     public AbstractUser(Long id, String username, String password, String email, Role.RoleType role) {
         this.id = id;
         this.username = username;
-        this.password = password;
+        setPassword(password);
         this.email = email;
         this.role = role;
     }
-
     public abstract void showMenu();
 
     public Long getId() {
@@ -41,7 +40,7 @@ public abstract class AbstractUser implements State {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = SecurityUtil.hashPassword(password);
     }
 
     public String getEmail() {
@@ -60,7 +59,6 @@ public abstract class AbstractUser implements State {
     public String toString() {
         return "ID: " + id
                 + ", username: " + username
-                + ", password: " + password
                 + ", email: " + email
                 + ", role: " + role;
     }

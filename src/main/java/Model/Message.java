@@ -1,4 +1,4 @@
-package main.java.Model;
+package Model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;

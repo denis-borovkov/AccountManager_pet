@@ -1,7 +1,7 @@
-package main.java.Command;
+package Command;
 
-import main.java.Service.UserService;
-import main.java.Model.User;
+import Service.UserService;
+import Model.User;
 
 public class RegisterUserHandler {
 

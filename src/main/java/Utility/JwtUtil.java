@@ -1,4 +1,4 @@
-package main.java.Utility;
+package Utility;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;

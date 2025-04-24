@@ -1,22 +1,23 @@
-package main.java.Model;
+package Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import main.java.Abstract.AbstractUser;
-import main.java.Service.NotificationService;
-import main.java.Utility.ConsoleUI;
-import main.java.interfaces.State;
+import Abstract.AbstractUser;
+import Service.NotificationService;
+import Utility.ConsoleUI;
+import interfaces.State;
 
 public class Admin extends AbstractUser implements State {
 
-    ConsoleUI ui = new ConsoleUI();
+    public Admin() {}
+
+    ConsoleUI ui;
     NotificationService notificationService;
 
-    public Admin() {}
 
     public Admin(Long id, String username, String password, String email, Role.RoleType role) {
         super(id, username, password, email, role);
         setPassword(password);
-        getNotificationService();
+        new NotificationService();
     }
 
 

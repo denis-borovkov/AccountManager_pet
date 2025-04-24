@@ -1,28 +1,26 @@
-package main.java.Service;
+package Service;
 
-import main.java.Command.RegisterUserCommand;
-import main.java.Command.RegisterUserHandler;
-import main.java.Model.Role;
-import main.java.Utility.ConsoleUI;
-import main.java.Model.User;
+import Command.RegisterUserCommand;
+import Command.RegisterUserHandler;
+import Model.Role;
+import Model.User;
+import Utility.ConsoleUI;
 
 import java.util.logging.Logger;
 
 public class MenuHandler {
 
-    private final ConsoleUI ui = new ConsoleUI();
-    private final RegisterUserHandler registerUserHandler;
-    private final AuthenticationService authenticationService = new AuthenticationService();
-    private final UserService userService = new UserService();
-    private final MessageService messageService = new MessageService();
     private final Logger logger = Logger.getLogger(MenuHandler.class.getName());
 
-    private Long id;
     private String username;
     private String password;
-    private String email;
-    private String content;
-    private String role;
+
+    ConsoleUI ui = new ConsoleUI();
+    UserService userService;
+    RegisterUserHandler registerUserHandler;
+    AuthenticationService authenticationService = new AuthenticationService();
+    MessageService messageService;
+
 
     public MenuHandler(RegisterUserHandler registerUserHandler) {
         this.registerUserHandler = registerUserHandler;
@@ -53,10 +51,11 @@ public class MenuHandler {
                 ⦁ Email не должен быть пустым \s
                 ⦁ Должен содержать символ '@'""");
         ui.printSeparator();
-        email = ui.readLine();
+        String email = ui.readLine();
 
         RegisterUserCommand command = new RegisterUserCommand(
                 new User(userService.generateId(), username, password, email, Role.RoleType.USER));
+
         boolean success = registerUserHandler.handle(command);
 
         if (success) {
@@ -96,19 +95,14 @@ public class MenuHandler {
 
     public void showMessageMenu() {
         ui.print("Введите получателя:\n");
-        userService.getUsersKeys();
+        //userService.getUsersKeys();
         String receiverName = ui.readLine();
 
         User sender = userService.getUserByName(username);
         User receiver = userService.getUserByName(receiverName);
 
         System.out.println("Сообщение:");
-        content = ui.readLine();
+        String content = ui.readLine();
         messageService.sendMessage(sender, receiver, content);
-    }
-
-
-    public void setRole(String role) {
-        this.role = role;
     }
 }

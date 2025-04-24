@@ -1,6 +1,6 @@
-package main.java.Service;
+package Service;
 
-import main.java.Model.Notification;
+import Model.Notification;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -10,8 +10,8 @@ import java.util.logging.Logger;
 
 public class NotificationService {
     private final Map<String, Queue<Notification>> notificationQueue = new HashMap<>();
-    private final FileService fileService = new FileService(this);
     private final Logger logger = Logger.getLogger(NotificationService.class.getName());
+    FileService fileService;
 
     public NotificationService() {
         fileService.loadNotificationsFromFile();

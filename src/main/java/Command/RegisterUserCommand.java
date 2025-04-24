@@ -1,7 +1,7 @@
-package main.java.Command;
+package Command;
 
-import main.java.Model.User;
-import main.java.interfaces.Command;
+import Model.User;
+import interfaces.Command;
 
 public record RegisterUserCommand(User user) implements Command {
 

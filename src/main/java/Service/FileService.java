@@ -1,12 +1,12 @@
-package main.java.Service;
+package Service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import main.java.Model.Message;
-import main.java.Model.Notification;
-import main.java.Model.User;
-import main.java.repository.UserRepository;
+import Config.FileConfig;
+import Model.Message;
+import Model.Notification;
+import Model.User;
+import repository.UserRepository;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,51 +16,30 @@ import java.util.Queue;
 import java.util.logging.Logger;
 
 public class FileService {
+    private final File storageFile = new File(FileConfig.STORAGE_FILE_PATH);
+    private final File messagesFile = new File(FileConfig.MESSAGES_FILE_PATH);
+    private final File notificationsFile = new File(FileConfig.NOTIFICATIONS_FILE_PATH);
+    private final File authenticationDataFile = new File(FileConfig.AUTH_DATA_FILE_PATH);
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
-    private final File storageFile = new File("src/main/resources/users.json");
-    private final File messagesFile = new File("src/main/resources/messages.json");
-    private final File notificationsFile = new File("src/main/resources/notifications.json");
-    private final File authenticationDataFile = new File("src/main/resources/authdata.json");
+    UserRepository userRepository = new UserRepository();
+    MessageService messageService;
+    NotificationService notificationService;
+    AuthenticationService authenticationService;
+    ObjectMapper objectMapper = new ObjectMapper();
 
-    private MessageService messageService;
-    private UserService userService;
-    private NotificationService notificationService;
-    private AuthenticationService authenticationService;
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-    private final Logger logger = Logger.getLogger(FileService.class.getName());
-
-    static {
-        objectMapper.registerModule(new JavaTimeModule());
-    }
-
-    public FileService(UserService userService) {
-        this.userService = userService;
-    }
-
-    public FileService(MessageService messageService) {
-        this.messageService = messageService;
-    }
-
-    public FileService(NotificationService notificationService) {
-        this.notificationService = notificationService;
-    }
-
-    public FileService(AuthenticationService authenticationService) {
-        this.authenticationService = authenticationService;
-    }
-
-    public void saveUsersToFile(UserRepository userDatabase) {
+    public void saveUsersToFile() {
         try {
-            objectMapper.writeValue(storageFile, userDatabase.getUserDatabase());
+            objectMapper.writeValue(storageFile, userRepository.getUserDatabase());
         } catch (IOException e) {
             logger.severe("Не удалось сохранить пользователей " + e.fillInStackTrace());
         }
     }
 
-    public void loadUsersFromFile(UserRepository userDatabase) {
+    public void loadUsersFromFile() {
         try {
             Map<String, User> loadedUsers = objectMapper.readValue(storageFile, new TypeReference<>() {});
-            userDatabase.addAll(loadedUsers);
+            userRepository.addAll(loadedUsers);
         } catch (IOException e) {
             logger.severe("Не удалось загрузить пользователей. Будет создан новый файл. \n" + e.getMessage());
         }

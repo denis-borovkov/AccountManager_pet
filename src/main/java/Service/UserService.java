@@ -1,20 +1,24 @@
-package main.java.Service;
+package Service;
 
-import main.java.Model.Role;
-import main.java.Model.User;
-import main.java.repository.UserRepository;
+import Model.Role;
+import Model.User;
+import Utility.ValidationUtil;
+import repository.UserRepository;
 
 import java.util.logging.Logger;
 
 public class UserService {
-
     private static final Logger logger = Logger.getLogger(UserService.class.getName());
-    private final UserRepository userRepository;
+    private UserRepository userRepository = new UserRepository();
+    private final FileService fileService = new FileService();
+
+    public UserService() {
+        fileService.loadUsersFromFile();
+    }
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-
 
     public Long generateId() {
         return System.nanoTime();
@@ -25,20 +29,20 @@ public class UserService {
             logger.warning("Пользователь с таким логином уже существует.");
             return false;
         }
-        if (ValidationService.isValidUsername(user.getUsername())) {
+        if (ValidationUtil.isValidUsername(user.getUsername())) {
             logger.warning("Неверный формат логина.");
             return false;
         }
-        if (ValidationService.isValidPassword(user.getPassword(), user.getUsername())) {
+        if (ValidationUtil.isValidPassword(user.getPassword(), user.getUsername())) {
             logger.warning("Неверный формат пароля.");
             return false;
         }
-        if (ValidationService.isValidEmail(user.getEmail())) {
+        if (ValidationUtil.isValidEmail(user.getEmail())) {
             logger.warning("Неверный формат email.");
             return false;
         }
         userRepository.add(user);
-        userRepository.saveToFile();
+        fileService.saveUsersToFile();
         return true;
     }
 
@@ -48,13 +52,13 @@ public class UserService {
             logger.warning("Пользователь не найден.");
             return false;
         }
-        if (ValidationService.isValidPassword(newPassword, username)) {
+        if (ValidationUtil.isValidPassword(newPassword, username)) {
             logger.warning("Неверный формат пароля.");
             return false;
         }
         user.setPassword(newPassword);
         userRepository.replace(username, user);
-        userRepository.saveToFile();
+        fileService.saveUsersToFile();
         return true;
     }
 
@@ -64,13 +68,13 @@ public class UserService {
             logger.warning("Пользователь не найден." + username);
             return false;
         }
-        if (ValidationService.isValidEmail(newEmail)) {
+        if (ValidationUtil.isValidEmail(newEmail)) {
             logger.warning("Неверный формат email." + newEmail);
             return false;
         }
         user.setEmail(newEmail);
         userRepository.replace(username, user);
-        userRepository.saveToFile();
+        fileService.saveUsersToFile();
         return true;
     }
 
@@ -85,16 +89,6 @@ public class UserService {
                         "\nEmail: " + user.getEmail() +
                         "\nРоль в системе: " + user.getRole())));
         System.out.println();
-    }
-
-    public void getUsersKeys() {
-        if (userRepository.isEmpty()) {
-            logger.warning("Нет сохраненных пользователей.");
-            return;
-        }
-        for (String key : userRepository.getUserDatabase().keySet()) {
-            System.out.println(key);
-        }
     }
 
     public void getAuthorisedUser(String username) {
@@ -123,15 +117,6 @@ public class UserService {
         return userRepository.exists(username);
     }
 
-    public boolean checkPassword(String username, String password) {
-        User user  = userRepository.getUser(username);
-        if (user == null) {
-            logger.warning("Пользователь не найден." + username);
-            return false;
-        }
-        return user.checkPassword(password);
-    }
-
     public void grantAdminRights(String username, String rootPassword) {
         User user = userRepository.getUser(username);
         if (user == null) {
@@ -141,7 +126,7 @@ public class UserService {
         if (rootPassword.equals("777"))
             new Role(Role.RoleType.ADMIN);
         logger.info(username + " теперь имеет права: " + user.getRole());
-        userRepository.saveToFile();
+        fileService.saveUsersToFile();
     }
 
     public void grantUserRights(String username, String rootPassword) {
@@ -153,7 +138,7 @@ public class UserService {
         if (rootPassword.equals("777"))
             new Role(Role.RoleType.USER);
         logger.info(username + " теперь имеет права: " + user.getRole());
-        userRepository.saveToFile();
+        fileService.saveUsersToFile();
     }
 
     public boolean isAdmin(User user) {
@@ -164,7 +149,7 @@ public class UserService {
     public boolean removeUser(String username) {
         if (userRepository.exists(username)) {
             userRepository.remove(username);
-            userRepository.saveToFile();
+            fileService.saveUsersToFile();
             return true;
         }
         logger.warning("Пользователь не найден в файлах пользователей\n");

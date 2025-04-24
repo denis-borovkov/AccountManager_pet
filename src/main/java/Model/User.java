@@ -1,26 +1,22 @@
-package main.java.Model;
+package Model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import main.java.Abstract.AbstractUser;
-import main.java.Service.NotificationService;
-import main.java.Utility.ConsoleUI;
-import main.java.interfaces.State;
-import org.mindrot.jbcrypt.BCrypt;
+import Abstract.AbstractUser;
+import Service.NotificationService;
+import Utility.ConsoleUI;
+import interfaces.State;
 
 public class User extends AbstractUser implements State {
 
-    private NotificationService notificationService;
-    ConsoleUI ui = new ConsoleUI();
-
-    @JsonCreator
+    ConsoleUI ui;
+    NotificationService notificationService;
     public User() {}
 
     public User(Long id, String username, String password, String email, Role.RoleType role) {
         super(id, username, password, email, role);
         setPassword(password);
-        getNotificationService();
+        new NotificationService();
     }
 
     @Override
@@ -44,12 +40,7 @@ public class User extends AbstractUser implements State {
     @Override
     @JsonIgnore
     public void setPassword(String password) {
-        BCrypt.hashpw(password, BCrypt.gensalt());
-    }
-
-    @JsonIgnore
-    public boolean checkPassword(String plainPassword) {
-        return BCrypt.checkpw(plainPassword, getPassword());
+        super.setPassword(password);
     }
 
     @Override

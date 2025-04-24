@@ -1,14 +1,20 @@
-package main.java.repository;
+package repository;
 
-import main.java.Model.User;
-import main.java.Service.FileService;
+import Model.User;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class UserRepository {
 
     private final Map<String, User> userDatabase = new HashMap<>();
+
+    public UserRepository() {}
+
+    public Map<String, User> getUserDatabase() {
+        return userDatabase;
+    }
 
     public void add(User user) {
         userDatabase.put(user.getUsername(), user);
@@ -22,8 +28,16 @@ public class UserRepository {
         return userDatabase.get(username);
     }
 
-    public User listUsers() {
-        return userDatabase.values();
+    public Map<String, User> listUsers() {
+        return userDatabase.entrySet().stream().collect(
+                Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue));
+    }
+
+    public void getUsers() {
+            for(String key : userDatabase.keySet())
+                System.out.println(key);
     }
 
     public void remove(String username) {
@@ -44,13 +58,5 @@ public class UserRepository {
 
     public boolean isEmpty() {
         return userDatabase.isEmpty();
-    }
-
-    public void saveToFile(FileService fileService) {
-        fileService.saveUsersToFile((UserRepository) userDatabase);
-    }
-
-    public void loadFromFile(FileService fileService) {
-        fileService.loadUsersFromFile((UserRepository) userDatabase);
     }
 }

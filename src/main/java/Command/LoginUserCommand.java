@@ -1,7 +1,7 @@
-package main.java.Command;
+package Command;
 
-import main.java.Service.AuthenticationService;
-import main.java.interfaces.Command;
+import Service.AuthenticationService;
+import interfaces.Command;
 
 public class LoginUserCommand implements Command {
 

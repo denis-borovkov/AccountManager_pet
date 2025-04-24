@@ -1,4 +1,4 @@
-package main.java.Utility;
+package Utility;
 
 import java.util.Scanner;
 import java.util.logging.Logger;

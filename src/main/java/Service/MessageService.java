@@ -1,7 +1,7 @@
-package main.java.Service;
+package Service;
 
-import main.java.Model.Message;
-import main.java.Model.User;
+import Model.Message;
+import Model.User;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,7 +12,7 @@ import java.util.Map;
 public class MessageService {
 
     private final Map<String, List<Message>> messageStorage = new HashMap<>();
-    FileService fileService = new FileService(this);
+    FileService fileService;
 
     public MessageService() {
         fileService.loadMessagesFromFile();

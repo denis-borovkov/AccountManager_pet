@@ -1,11 +1,10 @@
-package main.java.Model;
+package Model;
 
-import main.java.Abstract.AbstractUser;
-import main.java.Utility.ConsoleUI;
-import main.java.interfaces.State;
+import Abstract.AbstractUser;
+import Utility.ConsoleUI;
+import interfaces.State;
 
 public class Guest extends AbstractUser implements State {
-
     ConsoleUI ui = new ConsoleUI();
     private final Role.RoleType role = Role.RoleType.GUEST;
 

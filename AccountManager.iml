@@ -1,19 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="JAVA_MODULE" version="4">
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_21" inherit-compiler-output="true">
-    <exclude-output />
-    <content url="file://$MODULE_DIR$">
+  <component name="AdditionalModuleElements">
+    <content url="file://$MODULE_DIR$" dumb="true">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="temurin-22" jdkType="JavaSDK" />
-    <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="mindrot.jbcrypt" level="project" />
-    <orderEntry type="library" name="mysql.connector.java" level="project" />
-    <orderEntry type="library" name="fasterxml.jackson.core" level="project" />
-    <orderEntry type="library" name="fasterxml.jackson.core.databind" level="project" />
-    <orderEntry type="library" name="io.jsonwebtoken.jjwt.api" level="project" />
-    <orderEntry type="library" name="io.jsonwebtoken.jjwt.impl" level="project" />
-    <orderEntry type="library" name="io.jsonwebtoken.jjwt.jackson" level="project" />
-    <orderEntry type="library" name="fasterxml.jackson.datatype.jsr310" level="project" />
   </component>
 </module>

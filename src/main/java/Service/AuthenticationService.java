@@ -1,9 +1,10 @@
-package main.java.Service;
+package Service;
 
-import main.java.Utility.JwtUtil;
-import main.java.Model.User;
+import Utility.JwtUtil;
+import Model.User;
+import Utility.SecurityUtil;
+import repository.UserRepository;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -11,13 +12,10 @@ import java.util.logging.Logger;
 public class AuthenticationService {
     private String username;
     private String userToken;
-
     private final Logger logger = Logger.getLogger(AuthenticationService.class.getName());
     private final Map<String, String> authData = new HashMap<>();
-    UserService userService;
-    FileService fileService = new FileService(this);
-    Date lastLogin;
-    Date lastLogout;
+    FileService fileService = new FileService();
+    UserRepository userRepository;
 
     public AuthenticationService() {
         fileService.loadAuthDataFromFile();
@@ -28,7 +26,7 @@ public class AuthenticationService {
     }
 
     public void setUsername(String username) {
-        User user = userService.getUserDatabase().get(username);
+        User user  = userRepository.getUser(username);
         if (user != null) {
             this.username = username;
         } else {
@@ -56,16 +54,8 @@ public class AuthenticationService {
         return username;
     }
 
-    public void login() {
-        System.out.println("Пользователь" + username + "вошел в систему в: " + lastLogin.toString());
-    }
-
-    public void logout() {
-        System.out.println("Пользователь" + username + "вышел из системы в: " + lastLogout.toString());
-    }
-
     public boolean isAuthenticated(String username, String password) {
-        User user = userService.getUserDatabase().get(username);
+        User user  = userRepository.getUser(username);
         if (user == null) {
             logger.warning("Нет пользователей для аутентификации: " + username);
             return false;
@@ -74,7 +64,7 @@ public class AuthenticationService {
             logger.warning("Ошибка введенных данных.");
             return false;
         }
-        if (userService.getUserDatabase().containsKey(username) && user.checkPassword(password)) {
+        if (userRepository.exists(username) && SecurityUtil.checkPassword(password, user.getPassword())) {
             setUsername(username);
             setUserToken(username);
             authData.put(getUsername(), userToken);
