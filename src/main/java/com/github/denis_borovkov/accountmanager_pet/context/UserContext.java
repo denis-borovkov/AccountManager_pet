@@ -1,18 +1,15 @@
 package com.github.denis_borovkov.accountmanager_pet.context;
 
-import com.github.denis_borovkov.accountmanager_pet.abstractModel.AbstractUser;
-import com.github.denis_borovkov.accountmanager_pet.interfaces.State;
+import com.github.denis_borovkov.accountmanager_pet.model.User;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserContext implements State {
-    private AbstractUser currentUser;
+public class UserContext {
 
-    public AbstractUser setCurrentUser(AbstractUser user) {
-        return this.currentUser = user;
+    public void setCurrentUser(User user) {
+        this.currentUser = user;
     }
 
-    @Override
     public void showMenu() {
         if (currentUser != null) {
             currentUser.showMenu();

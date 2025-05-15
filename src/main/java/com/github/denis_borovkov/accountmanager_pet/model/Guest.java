@@ -1,16 +1,13 @@
 package com.github.denis_borovkov.accountmanager_pet.model;
 
-import com.github.denis_borovkov.accountmanager_pet.abstractModel.AbstractUser;
 import com.github.denis_borovkov.accountmanager_pet.utility.ConsoleUI;
-import com.github.denis_borovkov.accountmanager_pet.interfaces.State;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Guest extends AbstractUser implements State {
+public class Guest {
     ConsoleUI ui = new ConsoleUI();
     private final Role.RoleType role = Role.RoleType.GUEST;
 
-    @Override
     public void showMenu() {
         ui.printSeparator();
         ui.printMenu(
@@ -22,7 +19,6 @@ public class Guest extends AbstractUser implements State {
         ui.printSeparator();
 }
 
-    @Override
     public Role.RoleType getRole() {
         return role;
     }

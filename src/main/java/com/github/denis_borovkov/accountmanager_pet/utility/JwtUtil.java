@@ -1,40 +1,32 @@
 package com.github.denis_borovkov.accountmanager_pet.utility;
 
-import io.jsonwebtoken.*;
+import com.github.denis_borovkov.accountmanager_pet.implementation.UserDetailsImpl;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
 
+
 @Component
 public class JwtUtil {
-    private static final String SECRET_KEY = "SuperSecretKeyForJwtGeneration228";
-    private static final long EXPIRATION_TIME = 10000;
 
-    private static final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+    @Value("${app.secret.key}")
+    private static String SECRET_KEY;
+    @Value("${app.expiration.time}")
+    private static int EXPIRATION_TIME;
 
-    public static String generateToken(String username) {
-        return Jwts.builder()
-                .subject(username)
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(key)
+    private static final Key KEY = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+
+    public String generateToken(Authentication authentication) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        return Jwts.builder().subject(userDetails.getUsername()).issuedAt(new Date())
+                .expiration(new Date(EXPIRATION_TIME))
+                .signWith(KEY)
                 .compact();
     }
 
-    public static boolean validateToken(String token) {
-        try {
-             Jwts.parser()
-                    .verifyWith((SecretKey) key)
-                    .build()
-                    .parseSignedClaims(token)
-                    .getPayload()
-                    .getSubject();
-             return true;
-        } catch (JwtException e) {
-            return false;
-        }
-    }
 }

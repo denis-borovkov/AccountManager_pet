@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: "AccountManager_pet"
+app:
+  secret:
+    key: "SuperSecretKeyForJwtGeneration228"
+  expiration:
+    time: 10000

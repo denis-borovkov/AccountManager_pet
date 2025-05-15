@@ -1,7 +1,5 @@
 package com.github.denis_borovkov.accountmanager_pet.service;
 
-import com.github.denis_borovkov.accountmanager_pet.command.RegisterUserCommand;
-import com.github.denis_borovkov.accountmanager_pet.command.RegisterUserHandler;
 import com.github.denis_borovkov.accountmanager_pet.model.Role;
 import com.github.denis_borovkov.accountmanager_pet.model.User;
 import com.github.denis_borovkov.accountmanager_pet.utility.ConsoleUI;
@@ -11,28 +9,29 @@ import com.github.denis_borovkov.accountmanager_pet.repository.UserRepository;
 import java.util.logging.Logger;
 
 @Service
-public class MenuHandler {
+public class MenuService {
 
-    private final Logger logger = Logger.getLogger(MenuHandler.class.getName());
-    private final UserRepository userRepository;
+    private final Logger logger = Logger.getLogger(MenuService.class.getName());
 
     private String username;
     private String password;
 
     ConsoleUI ui = new ConsoleUI();
 
-    UserService userService;
-    RegisterUserHandler registerUserHandler;
-    AuthenticationService authenticationService;
-    MessageService messageService;
+    private final UserRepository userRepository;
+    private final UserService userService;
+    private final AuthenticationService authenticationService;
+    private final MessageService messageService;
 
 
-    public MenuHandler(UserService userService, AuthenticationService authenticationService, RegisterUserHandler registerUserHandler, UserRepository userRepository) {
+    public MenuService(UserService userService,
+                       AuthenticationService authenticationService,
+                       UserRepository userRepository,
+                       MessageService messageService) {
         this.userService = userService;
         this.authenticationService = authenticationService;
-        this.registerUserHandler = registerUserHandler;
         this.userRepository = userRepository;
-
+        this.messageService = messageService;
     }
 
     public void handleRegistration() {
@@ -61,18 +60,13 @@ public class MenuHandler {
                 ⦁ Должен содержать символ '@'""");
         ui.printSeparator();
         String email = ui.readLine();
+        ui.printSeparator();
 
-        RegisterUserCommand command = new RegisterUserCommand(
-                new User(userService.generateId(), username, password, email, Role.RoleType.USER));
-
-        boolean success = registerUserHandler.handle(command);
-
-        if (success) {
-            ui.println("Успешная регистрация.\n");
+        if (userService.createUser(new User(userService.generateId(), username, password, email, Role.RoleType.USER))) {
+            logger.info("Successfully created user");
         } else {
-            ui.println("Ошибка регистрации.\n");
+            logger.info("Failed to create user");
         }
-        System.out.println(userRepository.getUserDatabase());
     }
 
     public void handleLogin() {
@@ -114,5 +108,9 @@ public class MenuHandler {
         System.out.println("Сообщение:");
         String content = ui.readLine();
         messageService.sendMessage(sender, receiver, content);
+    }
+
+    public UserRepository getUserRepository() {
+        return userRepository;
     }
 }

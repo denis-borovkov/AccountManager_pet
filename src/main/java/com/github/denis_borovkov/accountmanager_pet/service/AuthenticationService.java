@@ -7,7 +7,6 @@ import com.github.denis_borovkov.accountmanager_pet.utility.SecurityUtil;
 import com.github.denis_borovkov.accountmanager_pet.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
 import java.util.logging.Logger;
 
 @Service
@@ -28,9 +27,6 @@ public class AuthenticationService {
         fileService.loadAuthDataFromFile();
     }
 
-    public Map<String, String> getAuthData() {
-        return authenticationRepository.getAuthData();
-    }
 
     public void setUsername(String username) {
         User user  = userRepository.getUser(username);

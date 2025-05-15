@@ -25,6 +25,9 @@ public class Notification {
 
     @Override
     public String toString() {
-        return String.join("\n", message);
+        return "Notification[" +
+                "username=" + username + ", " +
+                "message=" + message + ']';
     }
+
 }
