@@ -37,19 +37,19 @@ public class UserService implements UserDetailsService {
 
     public boolean createUser(User user) {
         if (userRepository.findUserByUsername(user.getUsername()).isPresent()) {
-            logger.warn("Пользователь с таким логином уже существует.");
+            logger.error("Пользователь с таким логином уже существует.");
             return false;
         }
         if (ValidationUtil.isValidUsername(user.getUsername())) {
-            logger.warn("Неверный формат логина.");
+            logger.error("Неверный формат логина.");
             return false;
         }
         if (ValidationUtil.isValidPassword(user.getPassword(), user.getUsername())) {
-            logger.warn("Неверный формат пароля.");
+            logger.error("Неверный формат пароля.");
             return false;
         }
         if (ValidationUtil.isValidEmail(user.getEmail())) {
-            logger.warn("Неверный формат email.");
+            logger.error("Неверный формат email.");
             return false;
         }
         userRepository.save(user);
@@ -83,9 +83,9 @@ public class UserService implements UserDetailsService {
             logger.warn("Нет сохраненных пользователей.");
             return;
         }
-        userRepository.exists.forEach(((username, user) ->
+        userRepository.findAll().forEach(((user) ->
                 System.out.println(
-                        "Имя пользователя: " + username +
+                        "Имя пользователя: " + user.getUsername() +
                         "\nEmail: " + user.getEmail() +
                         "\nРоль в системе: " + user.getRole())));
         System.out.println();
@@ -93,13 +93,13 @@ public class UserService implements UserDetailsService {
 
     public void getAuthorisedUser(String username) {
         Optional<User> user  = userRepository.findUserByUsername(username);
-        System.out.println("Имя пользователя: " + username +
-                "\nEmail: " + user.getEmail() +
-                "\nРоль в системе: " + user.getRole());
+        user.ifPresent(value -> System.out.println("Имя пользователя: " + username +
+                "\nEmail: " + value.getEmail() +
+                "\nРоль в системе: " + value.getRole()));
     }
 
     public User getUserByName(String username) {
-        for (User user : userRepository.values()) {
+        for (User user : userRepository.findAll()) {
             if (user.getUsername().equals(username)) {
                 return user;
             }
@@ -109,22 +109,22 @@ public class UserService implements UserDetailsService {
 
     public boolean checkUsername(String username) {
         User user  = (User) loadUserByUsername(username);
-        if (user.isEmpty()) {
-            logger.warn("Пользователь не найден." + username);
+        if (user.getUsername().isEmpty()) {
+            logger.error("Пользователь не найден.{}", username);
             return false;
         }
-        return userRepository.exists(username);
+        return userRepository.findUserByUsername(username).isPresent();
     }
 
     public void grantAdminRights(String username, String rootPassword) {
         User user  = (User) loadUserByUsername(username);
-        if (user.isEmpty()) {
+        if (user.getUsername().isEmpty()) {
             logger.warn("Пользователь не найден." + username);
             return;
         }
         if (rootPassword.equals("777"))
             new Role(Role.RoleType.ADMIN);
-        logger.info(username + " теперь имеет права: " + user.get().getRole());
+        logger.info("{} теперь имеет права: {}", username, user.getRole());
         //fileService.saveUsersToFile();
     }
 
@@ -140,15 +140,15 @@ public class UserService implements UserDetailsService {
     }
 
     public boolean isAdmin(User user) {
-        user = userRepository.findUserByUsername(user.getUsername());
+        user = userRepository.getUserByUsername(user.getUsername());
         if (user != null) {
-            user.getRole();
+            return user.getRole().equals(Role.RoleType.ADMIN);
         }
         return false;
     }
 
     public boolean removeUser(String username) {
-        if (userRepository.exists(username)) {
+        if (userRepository.findUserByUsername(username).isPresent()) {
             userRepository.removeUserByUsername(username);
             return true;
         }

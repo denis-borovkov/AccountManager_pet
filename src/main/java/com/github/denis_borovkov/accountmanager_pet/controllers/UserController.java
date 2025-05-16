@@ -5,8 +5,6 @@ import com.github.denis_borovkov.accountmanager_pet.repository.UserRepository;
 import com.github.denis_borovkov.accountmanager_pet.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("/api/v1/")
 public class UserController {
@@ -21,12 +19,7 @@ public class UserController {
 
     @GetMapping("{username}")
     public User getUser(@PathVariable String username) {
-        return userRepository.getUser(username);
-    }
-
-    @GetMapping("/users")
-    public Map<String, User> getAllUsers() {
-       return userRepository.listUsers();
+        return userRepository.getUserByUsername(username);
     }
 
     @PostMapping("/create")

@@ -1,12 +1,12 @@
 package com.github.denis_borovkov.accountmanager_pet.service;
 
 import com.github.denis_borovkov.accountmanager_pet.repository.AuthenticationRepository;
-import com.github.denis_borovkov.accountmanager_pet.utility.JwtUtil;
 import com.github.denis_borovkov.accountmanager_pet.model.User;
 import com.github.denis_borovkov.accountmanager_pet.utility.SecurityUtil;
 import com.github.denis_borovkov.accountmanager_pet.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.logging.Logger;
 
 @Service
@@ -29,8 +29,8 @@ public class AuthenticationService {
 
 
     public void setUsername(String username) {
-        User user  = userRepository.getUser(username);
-        if (user != null) {
+        Optional<User> user  = userRepository.findUserByUsername(username);
+        if (user.isPresent()) {
             this.username = username;
         } else {
             logger.warning("Пользователь не найден: " + username);
@@ -39,7 +39,7 @@ public class AuthenticationService {
 
     public void setUserToken(String username) {
         if (username != null) {
-            this.userToken = JwtUtil.generateToken(username);
+            //this.userToken = JwtUtil.generateToken(username);
         } else {
             logger.warning("Ошибка: невозможно создать токен для null пользователя.");
         }
@@ -58,8 +58,8 @@ public class AuthenticationService {
     }
 
     public boolean isAuthenticated(String username, String password) {
-        User user  = userRepository.getUser(username);
-        if (user == null) {
+        Optional<User> user  = userRepository.findUserByUsername(username);
+        if (user.isEmpty()) {
             logger.warning("Нет пользователей для аутентификации: " + username);
             return false;
         }
@@ -67,7 +67,7 @@ public class AuthenticationService {
             logger.warning("Ошибка введенных данных.");
             return false;
         }
-        if (userRepository.exists(username) && SecurityUtil.checkPassword(password, user.getPassword())) {
+        if (userRepository.existsByUsername(username) && SecurityUtil.checkPassword(password, user.get().getPassword())) {
             setUsername(username);
             setUserToken(username);
             authenticationRepository.getAuthData().put(getUsername(), userToken);
@@ -87,6 +87,6 @@ public class AuthenticationService {
             logger.warning("Токен отсутствует или пуст.");
             return false;
         }
-        return JwtUtil.validateToken(userToken);
+        return true;
     }
 }
