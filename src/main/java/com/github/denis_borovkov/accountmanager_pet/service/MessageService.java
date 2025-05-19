@@ -19,7 +19,7 @@ public class MessageService {
         //fileService.loadMessagesFromFile();
     }
 
-    public void sendMessage(User sender, User receiver, String content) {
+    /*public void sendMessage(User sender, User receiver, String content) {
         Message message = new Message(sender.getUsername(), receiver.getUsername(), content);
         messageRepository.createMessage(receiver.getUsername(), message);
         System.out.println("Сообщение отправлено от "
@@ -31,11 +31,14 @@ public class MessageService {
                 + receiver.getUsername());
         fileService.saveMessagesToFile();
     }
-
+*/
     public List<Message> showMessage(String receiver) {
         if (!messageRepository.exists(receiver)) {
             return Collections.emptyList();
         }
         return messageRepository.getMessage(receiver);
+    }
+
+    public void sendMessage(User sender, User receiver, String content) {
     }
 }

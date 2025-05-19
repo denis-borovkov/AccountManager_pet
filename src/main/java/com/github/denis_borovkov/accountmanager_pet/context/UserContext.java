@@ -7,12 +7,8 @@ import org.springframework.stereotype.Component;
 public class UserContext {
 
     public void setCurrentUser(User user) {
-        this.currentUser = user;
     }
 
     public void showMenu() {
-        if (currentUser != null) {
-            currentUser.showMenu();
-        }
     }
 }

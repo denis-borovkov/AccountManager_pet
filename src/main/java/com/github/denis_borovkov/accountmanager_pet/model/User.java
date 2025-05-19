@@ -1,6 +1,9 @@
 package com.github.denis_borovkov.accountmanager_pet.model;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -12,7 +15,7 @@ public class User {
     private String username;
     private String password;
     private String email;
-    private Role.RoleType role;
+    private List<GrantedAuthority> role;
 
     public User() {}
 
@@ -21,7 +24,7 @@ public class User {
             String username,
             String password,
             String email,
-            Role.RoleType role) {
+            List<GrantedAuthority> role) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -61,10 +64,13 @@ public class User {
         this.email = email;
     }
 
-    public Role.RoleType getRole() {
+
+    public List<GrantedAuthority> getRole() {
         return role;
     }
 
-
+    public void setRole(List<GrantedAuthority> role) {
+        this.role = role;
+    }
 }
 

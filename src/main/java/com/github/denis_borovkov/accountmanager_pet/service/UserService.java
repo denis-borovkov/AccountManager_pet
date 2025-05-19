@@ -6,6 +6,9 @@ import com.github.denis_borovkov.accountmanager_pet.model.User;
 import com.github.denis_borovkov.accountmanager_pet.repository.UserRepository;
 import com.github.denis_borovkov.accountmanager_pet.utility.ValidationUtil;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,13 +17,19 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserService implements UserDetailsService {
-
     private final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
+
+    public List<GrantedAuthority> grantedAuthorities =
+            AuthorityUtils.createAuthorityList(
+                    "ROLE_USER",
+                    "ROLE_ADMIN",
+                    "ROLE_GUEST");
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -52,6 +61,8 @@ public class UserService implements UserDetailsService {
             logger.error("Неверный формат email.");
             return false;
         }
+            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        user = new User(user.getId(), user.getUsername(),user.getPassword(), user.getEmail(), grantedAuthorities);
         userRepository.save(user);
         return true;
     }

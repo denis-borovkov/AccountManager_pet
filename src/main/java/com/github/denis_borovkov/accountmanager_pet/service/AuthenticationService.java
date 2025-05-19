@@ -2,6 +2,7 @@ package com.github.denis_borovkov.accountmanager_pet.service;
 
 import com.github.denis_borovkov.accountmanager_pet.repository.AuthenticationRepository;
 import com.github.denis_borovkov.accountmanager_pet.model.User;
+import com.github.denis_borovkov.accountmanager_pet.utility.JwtUtil;
 import com.github.denis_borovkov.accountmanager_pet.utility.SecurityUtil;
 import com.github.denis_borovkov.accountmanager_pet.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,7 @@ public class AuthenticationService {
 
     public void setUserToken(String username) {
         if (username != null) {
-            //this.userToken = JwtUtil.generateToken(username);
+            //this.userToken = JwtUtil.generateToken();
         } else {
             logger.warning("Ошибка: невозможно создать токен для null пользователя.");
         }

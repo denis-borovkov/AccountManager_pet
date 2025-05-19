@@ -1,8 +1,19 @@
 spring:
   application:
     name: "AccountManager_pet"
-app:
-  secret:
-    key: "SuperSecretKeyForJwtGeneration228"
-  expiration:
-    time: 10000
+  datasource:
+    url: jdbc:mysql://localhost:3306/account_manager
+    username: root
+    password: Ebaldremal228
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  security:
+    user:
+      name: user
+      password: user

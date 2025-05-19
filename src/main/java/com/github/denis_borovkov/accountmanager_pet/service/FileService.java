@@ -52,7 +52,7 @@ public class FileService {
 
     public void saveUsersToFile() {
         try {
-            objectMapper.writeValue(storageFile, userRepository.getUserDatabase());
+            objectMapper.writeValue(storageFile, userRepository.saveAll(userRepository.findAll()));
         } catch (IOException e) {
             logger.severe("Не удалось сохранить пользователей " + e.fillInStackTrace());
         }
@@ -61,7 +61,7 @@ public class FileService {
     public void loadUsersFromFile() {
         try {
             Map<String, User> loadedUsers = objectMapper.readValue(storageFile, new TypeReference<>() {});
-            userRepository.addAll(loadedUsers);
+            userRepository.saveAll(loadedUsers.values());
         } catch (IOException e) {
             logger.severe("Не удалось загрузить пользователей. Будет создан новый файл. \n" + e.getMessage());
         }

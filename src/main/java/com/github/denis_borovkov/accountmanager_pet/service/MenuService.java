@@ -62,7 +62,7 @@ public class MenuService {
         String email = ui.readLine();
         ui.printSeparator();
 
-        if (userService.createUser(new User(userService.generateId(), username, password, email, Role.RoleType.USER))) {
+        if (userService.createUser(new User())) {
             logger.info("Successfully created user");
         } else {
             logger.info("Failed to create user");
