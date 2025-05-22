@@ -1,10 +1,8 @@
 package com.github.denis_borovkov.accountmanager_pet.service;
 
-import com.github.denis_borovkov.accountmanager_pet.model.Role;
 import com.github.denis_borovkov.accountmanager_pet.model.User;
 import com.github.denis_borovkov.accountmanager_pet.utility.ConsoleUI;
 import org.springframework.stereotype.Service;
-import com.github.denis_borovkov.accountmanager_pet.repository.UserRepository;
 
 import java.util.logging.Logger;
 
@@ -18,7 +16,6 @@ public class MenuService {
 
     ConsoleUI ui = new ConsoleUI();
 
-    private final UserRepository userRepository;
     private final UserService userService;
     private final AuthenticationService authenticationService;
     private final MessageService messageService;
@@ -26,11 +23,9 @@ public class MenuService {
 
     public MenuService(UserService userService,
                        AuthenticationService authenticationService,
-                       UserRepository userRepository,
                        MessageService messageService) {
         this.userService = userService;
         this.authenticationService = authenticationService;
-        this.userRepository = userRepository;
         this.messageService = messageService;
     }
 
@@ -108,9 +103,5 @@ public class MenuService {
         System.out.println("Сообщение:");
         String content = ui.readLine();
         messageService.sendMessage(sender, receiver, content);
-    }
-
-    public UserRepository getUserRepository() {
-        return userRepository;
     }
 }

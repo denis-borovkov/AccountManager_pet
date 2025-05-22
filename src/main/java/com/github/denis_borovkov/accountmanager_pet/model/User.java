@@ -2,12 +2,13 @@ package com.github.denis_borovkov.accountmanager_pet.model;
 
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.List;
+import java.util.Collection;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,7 +16,6 @@ public class User {
     private String username;
     private String password;
     private String email;
-    private List<GrantedAuthority> role;
 
     public User() {}
 
@@ -23,21 +23,15 @@ public class User {
             Long id,
             String username,
             String password,
-            String email,
-            List<GrantedAuthority> role) {
+            String email) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
-        this.role = role;
     }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getUsername() {
@@ -64,13 +58,31 @@ public class User {
         this.email = email;
     }
 
-
-    public List<GrantedAuthority> getRole() {
-        return role;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
     }
 
-    public void setRole(List<GrantedAuthority> role) {
-        this.role = role;
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
     }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
+    }
+
+
 }
 

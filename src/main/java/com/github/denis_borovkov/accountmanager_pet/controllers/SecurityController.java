@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+
 @RestController
 @RequestMapping("/auth")
 public class SecurityController {
@@ -34,7 +35,6 @@ public class SecurityController {
         this.jwtUtil = jwtUtil;
     }
 
-
     @PostMapping("/signup")
     ResponseEntity<?> signup(@RequestBody SignupRequestDTO signupRequestDTO) {
         if (userRepository.existsByUsername(signupRequestDTO.username())) {
@@ -48,6 +48,7 @@ public class SecurityController {
         user.setUsername(signupRequestDTO.username());
         user.setPassword(encodedPassword);
         user.setEmail(signupRequestDTO.email());
+        user.getAuthorities();
         userRepository.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }

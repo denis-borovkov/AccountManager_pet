@@ -1,11 +1,10 @@
 package com.github.denis_borovkov.accountmanager_pet.service;
 
-import com.github.denis_borovkov.accountmanager_pet.implementation.UserDetailsImpl;
-import com.github.denis_borovkov.accountmanager_pet.model.Role;
+import com.github.denis_borovkov.accountmanager_pet.dto.UserDTO;
+import com.github.denis_borovkov.accountmanager_pet.mappers.UserDTOMapper;
 import com.github.denis_borovkov.accountmanager_pet.model.User;
 import com.github.denis_borovkov.accountmanager_pet.repository.UserRepository;
 import com.github.denis_borovkov.accountmanager_pet.utility.ValidationUtil;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,11 +18,18 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
     private final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
+    private final UserDTOMapper userDTOMapper;
+
+    public UserService(UserRepository userRepository, UserDTOMapper userDTOMapper) {
+        this.userRepository = userRepository;
+        this.userDTOMapper = userDTOMapper;
+    }
 
     public List<GrantedAuthority> grantedAuthorities =
             AuthorityUtils.createAuthorityList(
@@ -31,18 +37,19 @@ public class UserService implements UserDetailsService {
                     "ROLE_ADMIN",
                     "ROLE_GUEST");
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findUserByUsername(username).orElseThrow(()
+        return userRepository.findUserByUsername(username).orElseThrow(()
                 -> new UsernameNotFoundException(String.format("User %s not found", username)
         ));
-        return UserDetailsImpl.build(user);
     }
 
+    public List<UserDTO> getAllUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(userDTOMapper)
+                .collect(Collectors.toList());
+    }
 
     public boolean createUser(User user) {
         if (userRepository.findUserByUsername(user.getUsername()).isPresent()) {
@@ -61,8 +68,7 @@ public class UserService implements UserDetailsService {
             logger.error("Неверный формат email.");
             return false;
         }
-            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-        user = new User(user.getId(), user.getUsername(),user.getPassword(), user.getEmail(), grantedAuthorities);
+        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
         userRepository.save(user);
         return true;
     }
@@ -98,7 +104,8 @@ public class UserService implements UserDetailsService {
                 System.out.println(
                         "Имя пользователя: " + user.getUsername() +
                         "\nEmail: " + user.getEmail() +
-                        "\nРоль в системе: " + user.getRole())));
+                        "\nРоль в системе: " + user.getAuthorities())
+        ));
         System.out.println();
     }
 
@@ -106,7 +113,7 @@ public class UserService implements UserDetailsService {
         Optional<User> user  = userRepository.findUserByUsername(username);
         user.ifPresent(value -> System.out.println("Имя пользователя: " + username +
                 "\nEmail: " + value.getEmail() +
-                "\nРоль в системе: " + value.getRole()));
+                "\nРоль в системе: " + value.getAuthorities()));
     }
 
     public User getUserByName(String username) {
@@ -134,8 +141,7 @@ public class UserService implements UserDetailsService {
             return;
         }
         if (rootPassword.equals("777"))
-            new Role(Role.RoleType.ADMIN);
-        logger.info("{} теперь имеет права: {}", username, user.getRole());
+            logger.info("{} теперь имеет права: {}", username, user.getAuthorities());
         //fileService.saveUsersToFile();
     }
 
@@ -146,14 +152,13 @@ public class UserService implements UserDetailsService {
             return;
         }
         if (rootPassword.equals("777"))
-            new Role(Role.RoleType.USER);
-        logger.info(username + " теперь имеет права: " + user.getRole());
+            logger.info(username + " теперь имеет права: " + user.getAuthorities());
     }
 
-    public boolean isAdmin(User user) {
-        user = userRepository.getUserByUsername(user.getUsername());
+    public boolean isAdmin(UserDTO user) {
+        user = userRepository.getUserByUsername(user.username());
         if (user != null) {
-            return user.getRole().equals(Role.RoleType.ADMIN);
+            //TODO
         }
         return false;
     }

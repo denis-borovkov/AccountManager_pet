@@ -1,6 +1,6 @@
 package com.github.denis_borovkov.accountmanager_pet.utility;
 
-import com.github.denis_borovkov.accountmanager_pet.implementation.UserDetailsImpl;
+import com.github.denis_borovkov.accountmanager_pet.model.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.Authentication;
@@ -19,9 +19,9 @@ public class JwtUtil {
     private static final SecretKey KEY = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
     public String generateToken(Authentication authentication) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        User user = (User) authentication.getPrincipal();
         return Jwts.builder()
-                .subject(userDetails.getUsername())
+                .subject(user.getUsername())
                 .issuedAt(new Date())
                 .expiration(new Date(EXPIRATION_TIME))
                 .signWith(KEY)
